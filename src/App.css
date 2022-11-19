@@ -1,0 +1,182 @@
+.App {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.container {
+  flex-direction: column;
+  align-items: center;
+  width: 23%;
+}
+
+.App,
+.container,
+.login-container,
+.login-middle,
+.login-bottom,
+.input-container,
+.socials-container,
+footer {
+  display: flex;
+}
+
+.login-container {
+  flex-direction: column;
+  align-self: center;
+  border: 1px solid var(--grey-2);
+  border-radius: 20px;
+  width: 100%;
+}
+
+.login-container-inner {
+  margin: 2.75rem 3rem;
+}
+
+.login-middle {
+  flex-direction: column;
+}
+
+.login-middle .register-top {
+  margin: 1rem 0 0;
+  font-weight: 600;
+}
+
+.login-middle .register-text {
+  font-size: 14px;
+  margin: 0.5rem auto 1.5rem;
+  line-height: 150%;
+}
+
+.login-middle .login-btn {
+  background: var(--blue-2);
+  height: 2rem;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.login-middle .login-btn:hover {
+  background: var(--blue-3);
+  border: none;
+}
+
+.input-container {
+  align-items: center;
+  margin-bottom: 1rem;
+  height: 2.5rem;
+  border: 1px solid var(--grey-2);
+  border-radius: 8px;
+}
+
+.input-container input {
+  border: none;
+}
+
+.input-container input:focus,
+.input-container input:focus-visible {
+  outline: none;
+}
+
+.input-container span {
+  color: var(--grey-3);
+  font-size: 22px;
+  margin: 0.5rem 0.25rem 0.5rem 0.5rem;
+}
+
+.login-bottom {
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.login-bottom p {
+  font-size: 12px;
+  color: var(--grey-3);
+  margin: 0.5rem auto;
+}
+
+.login-bottom .login-bottom-element {
+  margin-bottom: 0;
+}
+
+.login-bottom span {
+  color: var(--blue-1);
+}
+
+.login-bottom span:hover {
+  color: var(--blue-2);
+  cursor: pointer;
+}
+
+.socials-container {
+  justify-content: space-evenly;
+}
+
+.socials-container img {
+  margin: 0.5rem;
+}
+
+footer {
+  justify-content: space-between;
+  width: 100%;
+}
+
+footer p {
+  font-size: 14px;
+  color: var(--grey-3);
+}
+
+@media (width < 1600px) {
+  .container {
+    width: 30%
+  }
+}
+
+@media (width < 1200px) {
+  .container {
+    width: 40%;
+  }
+}
+
+@media (width < 900px) {
+  .container {
+    width: 46%;
+  }
+}
+
+@media (width < 768px) {
+  .App {
+    justify-content: initial;
+  }
+  .container {
+    width: 100%;
+    height: 100%;
+  }
+  .login-container {
+    border: none;
+    height: 80%;
+  }
+  .login-container-inner {
+    margin: 1rem;
+    height: 100%;
+  }
+  .login-top {
+    margin-bottom: 33%;
+  }
+  footer {
+    margin-top: auto;
+    width: 90%
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-container input {
+    background: none;
+  }
+}

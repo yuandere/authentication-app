@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Overpass&family=Merriweather:wght@400;500;600&family=Poppins:wght@100;200;300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+
+:root {
+  --font: "Poppins", Helvetica, sans-serif;
+  --primary-color: #ff7a4e;
+
+  --grey-1: #f2f2f2;
+  --grey-15: #e2e2e2;
+  --grey-2: #bdbdbd;
+  --grey-3: #828282;
+  --blue-1: #2D9CDB;
+  --blue-2: #337aff;
+  --blue-3: #3358ff;
+  --green-1: #27AE60;
+  --red-1: #EB5757;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.5rem;
+
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-xxl: 5rem;
+
+  --rounded-sm: 8px;
+  --rounded: 16px;
+
+  --shadow-sm: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  --shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0px 0px 16px 2px rgba( 0, 0, 0, .2 );
+
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  font-family: var(--font);
+}
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
