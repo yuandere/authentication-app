@@ -1,10 +1,34 @@
+import { emailValidate } from '../email-validate';
+
 export interface LoginProps {
 	isThemeDark: boolean;
 	loginFlag: boolean;
 	setLoginFlag: (loginFlag: boolean) => void;
+
+	inputEmail: string;
+	setInputEmail: (inputEmail: string) => void;
+	setInputPassword: (inputPassword: string) => void;
+	submitRegister: () => void;
+	submitLogin: () => void;
 }
 
-const Login = ({ isThemeDark, loginFlag, setLoginFlag }: LoginProps) => {
+const Login = ({
+	isThemeDark,
+	loginFlag,
+	setLoginFlag,
+	inputEmail,
+	setInputEmail,
+	setInputPassword,
+	submitRegister,
+	submitLogin,
+}: LoginProps) => {
+	const isValidEmail = () => {
+		if (inputEmail === '') {
+			return true;
+		}
+		return emailValidate(inputEmail);
+	};
+
 	return (
 		<div className="login-container">
 			<div className="login-container-inner">
@@ -31,21 +55,48 @@ const Login = ({ isThemeDark, loginFlag, setLoginFlag }: LoginProps) => {
 							</p>
 						</>
 					)}
+					<div className="input-component">
+						<div className="input-container">
+							<span className="material-icons">email</span>
+							<input
+								type="text"
+								placeholder="Email"
+								size={16}
+								autoFocus
+								onChange={(e) => {
+									setInputEmail(e.target.value);
+								}}
+							></input>
+						</div>
+						{/* {!isValidEmail() ? (
+							<div className="input-helper">
+								<p>left</p>
+							</div>
+						) : null} */}
+					</div>
+					<div className="input-component">
+						<div className="input-container">
+							<span className="material-icons">lock</span>
+							<input
+								type="text"
+								placeholder="Password"
+								size={16}
+								onChange={(e) => {
+									setInputPassword(e.target.value);
+								}}
+							></input>
+						</div>
+						{/* <div className="input-helper">
+							<p>left</p>
+						</div> */}
+					</div>
 
-					<div className="input-container">
-						<span className="material-icons">email</span>
-						<input type="text" placeholder="Email" size={16}></input>
-					</div>
-					<div className="input-container">
-						<span className="material-icons">lock</span>
-						<input type="text" placeholder="Password" size={16}></input>
-					</div>
 					{loginFlag ? (
-						<button className="login-btn">
+						<button className="login-btn" onClick={submitLogin}>
 							<p>Login</p>
 						</button>
 					) : (
-						<button className="login-btn">
+						<button className="login-btn" onClick={submitRegister}>
 							<p>Start coding now</p>
 						</button>
 					)}
