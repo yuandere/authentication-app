@@ -1,33 +1,33 @@
-import { emailValidate } from '../email-validate';
+import Input from '../components/Input';
+
 
 export interface LoginProps {
 	isThemeDark: boolean;
 	loginFlag: boolean;
 	setLoginFlag: (loginFlag: boolean) => void;
-
-	inputEmail: string;
 	setInputEmail: (inputEmail: string) => void;
 	setInputPassword: (inputPassword: string) => void;
 	submitRegister: () => void;
 	submitLogin: () => void;
+	formEmailError: boolean;
+	formPasswordError: boolean;
+	setFormEmailError: (formEmailError: boolean) => void;
+	setFormPasswordError: (formPasswordError: boolean) => void;
 }
 
 const Login = ({
 	isThemeDark,
 	loginFlag,
 	setLoginFlag,
-	inputEmail,
 	setInputEmail,
 	setInputPassword,
 	submitRegister,
 	submitLogin,
+	formEmailError,
+	formPasswordError,
+	setFormEmailError,
+	setFormPasswordError
 }: LoginProps) => {
-	const isValidEmail = () => {
-		if (inputEmail === '') {
-			return true;
-		}
-		return emailValidate(inputEmail);
-	};
 
 	return (
 		<div className="login-container">
@@ -55,41 +55,27 @@ const Login = ({
 							</p>
 						</>
 					)}
-					<div className="input-component">
-						<div className="input-container">
-							<span className="material-icons">email</span>
-							<input
-								type="text"
-								placeholder="Email"
-								size={16}
-								autoFocus
-								onChange={(e) => {
-									setInputEmail(e.target.value);
-								}}
-							></input>
-						</div>
-						{/* {!isValidEmail() ? (
-							<div className="input-helper">
-								<p>left</p>
-							</div>
-						) : null} */}
-					</div>
-					<div className="input-component">
-						<div className="input-container">
-							<span className="material-icons">lock</span>
-							<input
-								type="text"
-								placeholder="Password"
-								size={16}
-								onChange={(e) => {
-									setInputPassword(e.target.value);
-								}}
-							></input>
-						</div>
-						{/* <div className="input-helper">
-							<p>left</p>
-						</div> */}
-					</div>
+					<Input
+						placeholder="Email"
+						helperText='Please input a valid email'
+						iconLeft="email"
+						size={16}
+						autofocus
+						onChangeSetter={setInputEmail}
+						formEmailError={formEmailError}
+						setFormEmailError={setFormEmailError}
+						setFormPasswordError={setFormPasswordError}
+					></Input>
+					<Input
+						placeholder="Password"
+						helperText='Password must be at least 4 characters long'
+						iconLeft="lock"
+						size={16}
+						onChangeSetter={setInputPassword}
+						formPasswordError={formPasswordError}
+						setFormEmailError={setFormEmailError}
+						setFormPasswordError={setFormPasswordError}
+					></Input>
 
 					{loginFlag ? (
 						<button className="login-btn" onClick={submitLogin}>
@@ -101,6 +87,7 @@ const Login = ({
 						</button>
 					)}
 				</div>
+
 				<div className="login-bottom">
 					<p>or continue with one of these</p>
 					<div className="socials-container">

@@ -4,3 +4,10 @@ export const emailValidate = (email: string) => {
 	}
 	return false;
 };
+
+export const passwordValidate = (password: string) => {
+	if (password.length >= 4) {
+		return true
+	}
+	return false
+}
