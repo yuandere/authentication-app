@@ -40,9 +40,9 @@ const NavbarProps = ({
 				}}
 			>
 				<div className="nav-pfp">
-					<img src=""></img>
+					<img src={userInfo.picture_url ? userInfo.picture_url : 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU='}></img>
 				</div>
-				<h4>{userInfo.name}</h4>
+				<p>{userInfo.name}</p>
 				<div className="nav-dropdown-btn">
 					<span className="material-icons">arrow_drop_{isNavMenuOpen ? 'down' : 'up'}</span>
 				</div>

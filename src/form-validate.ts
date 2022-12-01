@@ -11,3 +11,10 @@ export const passwordValidate = (password: string) => {
 	}
 	return false
 }
+
+export const minValidate = (name: string) => {
+	if (name.length >= 1) {
+		return true
+	}
+	return false
+}

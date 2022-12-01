@@ -28,13 +28,13 @@ function App() {
 		password: string;
 		picture_url: string;
 	}>({
-		name: 'name',
+		name: 'Firstname Lastname',
 		bio: 'bio',
 		phone: 1234,
-		email: 'email',
-		password: 'password',
+		email: 'email@email.com',
+		password: 'password***',
 		picture_url:
-			'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/intermediary/f/45c7dd7e-6cef-4101-93b9-df6da53c9ac7/dc8d1wu-64c76e37-241a-4a64-b742-edd9ade822b5.png/v1/fill/w_894,h_894,strp/smiley_emoticon_emoji____facebook_messenger_by_thebether_dc8d1wu-pre.png',
+			'https://stylecaster.com/wp-content/uploads/2015/07/round-face.jpg',
 	});
 
 	// other
@@ -147,7 +147,11 @@ function App() {
 
 	return (
 		<div className="App">
-			{isLoading ? <div className="loading-screen"></div> : null}
+			{isLoading ? (
+				<div className="loading-screen">
+					<img src="./src/assets/Spinner-1s-200px.svg"></img>
+				</div>
+			) : null}
 			{isAlertModalOpen ? (
 				<AlertModal
 					alertModalRef={alertModalRef}
@@ -163,15 +167,17 @@ function App() {
 						setIsNavMenuOpen={setIsNavMenuOpen}
 						userInfo={userInfo}
 					></Navbar>
-					<UserInfoView userInfo={userInfo}></UserInfoView>
+					<div className="container-main-content">
+						<UserInfoView userInfo={userInfo}></UserInfoView>
+						<footer>
+							<p>
+								created by <span>@yuandere</span>
+							</p>
+							<p>devChallenges.io</p>
+						</footer>
+					</div>
 					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
 					<button onClick={() => setIsUserLoggedIn(false)}>logout test</button>
-					<footer>
-						<p>
-							created by <span>@yuandere</span>
-						</p>
-						<p>devChallenges.io</p>
-					</footer>
 				</div>
 			) : (
 				<div className="container">
@@ -188,14 +194,14 @@ function App() {
 						setFormEmailError={setFormEmailError}
 						setFormPasswordError={setFormPasswordError}
 					></Login>
-					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
-					<button onClick={() => setIsUserLoggedIn(true)}>login test</button>
 					<footer>
 						<p>
 							created by <span>@yuandere</span>
 						</p>
 						<p>devChallenges.io</p>
 					</footer>
+					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
+					<button onClick={() => setIsUserLoggedIn(true)}>login test</button>
 				</div>
 			)}
 		</div>

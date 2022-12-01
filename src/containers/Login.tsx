@@ -64,7 +64,6 @@ const Login = ({
 						onChangeSetter={setInputEmail}
 						formEmailError={formEmailError}
 						setFormEmailError={setFormEmailError}
-						setFormPasswordError={setFormPasswordError}
 					></Input>
 					<Input
 						placeholder="Password"
@@ -73,7 +72,6 @@ const Login = ({
 						size={16}
 						onChangeSetter={setInputPassword}
 						formPasswordError={formPasswordError}
-						setFormEmailError={setFormEmailError}
 						setFormPasswordError={setFormPasswordError}
 					></Input>
 

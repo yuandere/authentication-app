@@ -14,8 +14,8 @@ export interface InputProps {
 	onChangeSetter: any;
   formEmailError?: boolean;
   formPasswordError?: boolean;
-  setFormEmailError: (formEmailError: boolean) => void;
-	setFormPasswordError: (formPasswordError: boolean) => void;
+  setFormEmailError?: any;
+	setFormPasswordError?: any;
 }
 
 const Input = ({
