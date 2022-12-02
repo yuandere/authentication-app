@@ -28,13 +28,13 @@ function App() {
 		password: string;
 		picture_url: string;
 	}>({
-		name: 'Firstname Lastname',
-		bio: 'bio',
-		phone: 1234,
-		email: 'email@email.com',
-		password: 'password***',
+		name: 'Ana Srzentic',
+		bio: '10x fullstack engineer aka the value proposition hire',
+		phone: 1234567890,
+		email: 'ana_srz@email.com',
+		password: '***********',
 		picture_url:
-			'https://stylecaster.com/wp-content/uploads/2015/07/round-face.jpg',
+			'https://imgs.search.brave.com/vYImUzGEAiCtJV58T_sBGS7gJd-jiRcQyHDNpzseph8/rs:fit:1080:1080:1/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzVhLzcy/L2RkLzVhNzJkZGM0/YjBiZjRiZjkyNWQ4/ODUzODgzYTIyZDU0/LmpwZw',
 	});
 
 	// other
