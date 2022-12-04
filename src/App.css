@@ -52,7 +52,9 @@ nav .nav-right,
 .container-main-content,
 .user-info-container,
 .user-info-top,
-.user-info-row {
+.user-info-row,
+.nav-dropdown,
+.nav-dropdown-item {
   display: flex;
 }
 
@@ -63,6 +65,9 @@ nav .nav-right,
   position: absolute;
   height: 100vh;
   width: 100vw;
+}
+
+.alert-modal-container {
   background: rgba(0, 0, 0, 0.712);
 }
 
@@ -207,31 +212,84 @@ nav {
 }
 nav .nav-right {
   align-items: center;
-  cursor: pointer;
 }
 nav .nav-right p {
   font-family: "Segoe UI", Helvetica, sans-serif;
   font-weight: 600;
   margin: 0 0.75rem;
 }
-
-.nav-pfp {
+nav .nav-pfp {
   width: 40px;
   height: 40px;
   border: 1px solid transparent;
   border-radius: 10px;
   overflow: hidden;
+  cursor: pointer;
 }
-.nav-pfp img {
+nav .nav-pfp img {
   height: 100%;
   width: 100%;
   -o-object-fit: cover;
      object-fit: cover;
 }
-
-.nav-dropdown-btn span {
+nav .nav-name {
+  cursor: pointer;
+}
+nav .nav-dropdown-btn span {
   font-size: 30px;
   transform: translateY(5px);
+}
+
+.nav-dropdown-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.nav-dropdown {
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--grey-15);
+  border-radius: 10px;
+  position: absolute;
+  padding: 0.5rem 0.75rem;
+  top: var(--navMenuTop);
+  left: var(--navMenuLeft);
+  right: var(--navMenuRight);
+  width: var(--navMenuWidth);
+  box-shadow: var(--shadow-sm);
+  background: white;
+}
+
+.nav-dropdown-hr {
+  border-top: 1px solid var(--grey-15);
+  margin: 0.25rem auto 0.5rem;
+  width: 100%;
+}
+
+.nav-dropdown-item {
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  width: 100%;
+  height: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+.nav-dropdown-item span {
+  margin: auto 0.5rem;
+}
+.nav-dropdown-item p {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+}
+.nav-dropdown-item:hover {
+  cursor: pointer;
+  background: var(--grey-1);
+}
+
+.nav-dropdown-item-red span,
+.nav-dropdown-item-red p {
+  color: var(--red-1);
 }
 
 .container-main-content {
@@ -365,6 +423,9 @@ nav .nav-right p {
     justify-content: flex-end;
     text-align: right;
   }
+  .nav-dropdown-container {
+    background: rgba(0, 0, 0, 0.712);
+  }
 }
 @media (prefers-color-scheme: dark) {
   .alert-modal-inner {
@@ -373,5 +434,8 @@ nav .nav-right p {
   }
   .input-container input {
     background: none;
+  }
+  .nav-dropdown {
+    background: #242424;
   }
 }/*# sourceMappingURL=App.css.map */

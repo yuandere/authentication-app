@@ -9,11 +9,14 @@ type UserInfoProps = {
 
 export interface UserInfoViewProps {
 	userInfo: UserInfoProps;
+	profileEditFlag: boolean;
+	setProfileEditFlag: (profileEditFlag: boolean) => void;
 }
 
 const UserInfoView = ({ userInfo }: UserInfoViewProps) => {
 	return (
 		<>
+		
 			<h2 style={{ alignSelf: 'center', marginBottom: '0' }}>Personal info</h2>
 			<p style={{ alignSelf: 'center', marginBottom: '2rem' }}>
 				Basic info, like your name and photo

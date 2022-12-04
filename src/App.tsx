@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import Login from './containers/Login';
 import AlertModal from './containers/AlertModal';
 import Navbar from './containers/Navbar';
 import UserInfoView from './containers/UserInfoView';
+import Dropdown from './components/Dropdown';
 import { emailValidate, passwordValidate } from './form-validate';
 import './App.css';
 
@@ -18,8 +19,9 @@ function App() {
 	const [inputPassword, setInputPassword] = useState<string>('');
 	const [formEmailError, setFormEmailError] = useState<boolean>(false);
 	const [formPasswordError, setFormPasswordError] = useState<boolean>(false);
+
 	// main view
-	const [isNewUser, setIsNewUser] = useState<boolean>(false);
+	const [profileEditFlag, setProfileEditFlag] = useState<boolean>(false);
 	const [userInfo, setUserInfo] = useState<{
 		name: string;
 		bio: string;
@@ -37,7 +39,7 @@ function App() {
 			'https://imgs.search.brave.com/vYImUzGEAiCtJV58T_sBGS7gJd-jiRcQyHDNpzseph8/rs:fit:1080:1080:1/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzVhLzcy/L2RkLzVhNzJkZGM0/YjBiZjRiZjkyNWQ4/ODUzODgzYTIyZDU0/LmpwZw',
 	});
 
-	// other
+	// other app states
 	const [isThemeDark, setIsThemeDark] = useState<boolean>(false);
 	const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
 	const [alertModalContent, setAlertModalContent] = useState<{
@@ -46,9 +48,13 @@ function App() {
 	}>({ title: 'alert title', message: 'alert message' });
 	const [isNavMenuOpen, setIsNavMenuOpen] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const navRightRef = useRef<HTMLDivElement>(null);
 
 	const alertModalRef = useOnclickOutside(() => {
 		setIsAlertModalOpen(false);
+	});
+	const navOpenRef = useOnclickOutside(() => {
+		setIsNavMenuOpen(false);
 	});
 
 	const handleThemeChange = () => {
@@ -75,7 +81,7 @@ function App() {
 			.then((res) => {
 				console.log(res.data);
 				setIsUserLoggedIn(true);
-				setIsNewUser(true);
+				setProfileEditFlag(true);
 				setIsLoading(false);
 			})
 			.catch((err) => {
@@ -134,6 +140,29 @@ function App() {
 			});
 	};
 
+	const handleNavRefLocation = () => {
+		const { current } = navRightRef;
+		if (current) {
+			let boundingRect = current.getBoundingClientRect();
+			document.documentElement.style.setProperty(
+				'--navMenuTop',
+				`${boundingRect.top + boundingRect.height + 10}px`
+			);
+			document.documentElement.style.setProperty(
+				'--navMenuLeft',
+				`${boundingRect.left}px`
+			);
+			document.documentElement.style.setProperty(
+				'--navMenuRight',
+				`${boundingRect.right}px`
+			);
+			document.documentElement.style.setProperty(
+				'--navMenuWidth',
+				`${boundingRect.width}px`
+			);
+		}
+	};
+
 	useEffect(() => {
 		const matchesDark = window.matchMedia('(prefers-color-scheme: dark)');
 		if (matchesDark.matches) {
@@ -144,6 +173,14 @@ function App() {
 			matchesDark.removeEventListener('change', handleThemeChange);
 		};
 	}, []);
+
+	useLayoutEffect(() => {
+		window.addEventListener('resize', handleNavRefLocation);
+		handleNavRefLocation();
+		return () => {
+			window.removeEventListener('resize', handleNavRefLocation);
+		};
+	}, [isUserLoggedIn]);
 
 	return (
 		<div className="App">
@@ -159,6 +196,13 @@ function App() {
 					setIsAlertModalOpen={setIsAlertModalOpen}
 				></AlertModal>
 			) : null}
+			{isNavMenuOpen ? (
+				<Dropdown
+					navOpenRef={navOpenRef}
+					setIsUserLoggedIn={setIsUserLoggedIn}
+					setIsNavMenuOpen={setIsNavMenuOpen}
+				></Dropdown>
+			) : null}
 			{isUserLoggedIn ? (
 				<div className="container-main">
 					<Navbar
@@ -166,9 +210,14 @@ function App() {
 						isNavMenuOpen={isNavMenuOpen}
 						setIsNavMenuOpen={setIsNavMenuOpen}
 						userInfo={userInfo}
+						navRightRef={navRightRef}
 					></Navbar>
 					<div className="container-main-content">
-						<UserInfoView userInfo={userInfo}></UserInfoView>
+						<UserInfoView
+							userInfo={userInfo}
+							profileEditFlag={profileEditFlag}
+							setProfileEditFlag={setProfileEditFlag}
+						></UserInfoView>
 						<footer>
 							<p>
 								created by <span>@yuandere</span>
