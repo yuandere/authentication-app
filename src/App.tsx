@@ -8,6 +8,7 @@ import UserInfoView from './containers/UserInfoView';
 import Dropdown from './components/Dropdown';
 import { emailValidate, passwordValidate } from './form-validate';
 import './App.css';
+import EditPfp from './components/EditPfp';
 
 function App() {
 	// login view
@@ -19,6 +20,10 @@ function App() {
 	const [inputPassword, setInputPassword] = useState<string>('');
 	const [formEmailError, setFormEmailError] = useState<boolean>(false);
 	const [formPasswordError, setFormPasswordError] = useState<boolean>(false);
+	const [inputName, setInputName] = useState<string>('');
+	const [inputBio, setInputBio] = useState<string>('');
+	const [inputPhone, setInputPhone] = useState<number>(1);
+	const [inputPictureURL, setInputPictureURL] = useState<string>('');
 
 	// main view
 	const [profileEditFlag, setProfileEditFlag] = useState<boolean>(false);
@@ -48,6 +53,7 @@ function App() {
 	}>({ title: 'alert title', message: 'alert message' });
 	const [isNavMenuOpen, setIsNavMenuOpen] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isEditPfpModalOpen, setIsEditPfpModalOpen] = useState<boolean>(false);
 	const navRightRef = useRef<HTMLDivElement>(null);
 
 	const alertModalRef = useOnclickOutside(() => {
@@ -140,6 +146,13 @@ function App() {
 			});
 	};
 
+	const logout = () => {
+		setIsUserLoggedIn(false);
+		setIsNavMenuOpen(false);
+		setProfileEditFlag(false);
+		setLoginFlag(true);
+	};
+
 	const handleNavRefLocation = () => {
 		const { current } = navRightRef;
 		if (current) {
@@ -197,11 +210,15 @@ function App() {
 				></AlertModal>
 			) : null}
 			{isNavMenuOpen ? (
-				<Dropdown
-					navOpenRef={navOpenRef}
-					setIsUserLoggedIn={setIsUserLoggedIn}
-					setIsNavMenuOpen={setIsNavMenuOpen}
-				></Dropdown>
+				<Dropdown navOpenRef={navOpenRef} logout={logout}></Dropdown>
+			) : null}
+			{isEditPfpModalOpen ? (
+				<EditPfp
+					setInputPictureURL={setInputPictureURL}
+					setIsEditPfpModalOpen={setIsEditPfpModalOpen}
+					inputPictureURL={inputPictureURL}
+					userPictureURL={userInfo.picture_url}
+				></EditPfp>
 			) : null}
 			{isUserLoggedIn ? (
 				<div className="container-main">
@@ -217,6 +234,13 @@ function App() {
 							userInfo={userInfo}
 							profileEditFlag={profileEditFlag}
 							setProfileEditFlag={setProfileEditFlag}
+							setInputName={setInputName}
+							setInputBio={setInputBio}
+							setInputPhone={setInputPhone}
+							setInputEmail={setInputEmail}
+							setInputPassword={setInputPassword}
+							setIsEditPfpModalOpen={setIsEditPfpModalOpen}
+							inputPictureURL={inputPictureURL}
 						></UserInfoView>
 						<footer>
 							<p>

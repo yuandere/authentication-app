@@ -57,7 +57,7 @@ const Login = ({
 					)}
 					<Input
 						placeholder="Email"
-						helperText='Please input a valid email'
+						helperText='Email is not valid'
 						iconLeft="email"
 						size={16}
 						autofocus
@@ -67,7 +67,7 @@ const Login = ({
 					></Input>
 					<Input
 						placeholder="Password"
-						helperText='Password must be at least 4 characters long'
+						helperText='Password must be at least 4 characters'
 						iconLeft="lock"
 						size={16}
 						onChangeSetter={setInputPassword}

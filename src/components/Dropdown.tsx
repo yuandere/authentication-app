@@ -1,13 +1,11 @@
 export interface DropdownProps {
 	navOpenRef: any;
-	setIsUserLoggedIn: (isUserLoggedIn: boolean) => void;
-	setIsNavMenuOpen: (isNavMenuOpen: boolean) => void;
+	logout: () => void;
 }
 
 export const Dropdown = ({
 	navOpenRef,
-	setIsUserLoggedIn,
-	setIsNavMenuOpen,
+	logout
 }: DropdownProps) => {
 	return (
 		<div className="nav-dropdown-container">
@@ -23,10 +21,7 @@ export const Dropdown = ({
 				<div className="nav-dropdown-hr"></div>
 				<div
 					className="nav-dropdown-item nav-dropdown-item-red"
-					onClick={() => {
-						setIsUserLoggedIn(false);
-						setIsNavMenuOpen(false);
-					}}
+					onClick={logout}
 				>
 					<span className="material-icons">logout</span>
 					<p>Logout</p>
