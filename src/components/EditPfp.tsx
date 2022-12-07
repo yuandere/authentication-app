@@ -5,6 +5,7 @@ export interface EditPfpProps {
 	setIsEditPfpModalOpen: (isEditPfpModalOpen: boolean) => void;
 	inputPictureURL: string;
 	userPictureURL: string;
+	editPfpModalRef: any;
 }
 
 const EditPfp = ({
@@ -12,10 +13,11 @@ const EditPfp = ({
 	setIsEditPfpModalOpen,
 	inputPictureURL,
 	userPictureURL,
+	editPfpModalRef
 }: EditPfpProps) => {
 	return (
 		<div className="edit-pfp-container">
-			<div className="edit-pfp-inner flex flex-col align-center">
+			<div className="edit-pfp-inner flex flex-col align-center" ref={editPfpModalRef}>
 				<p style={{ marginTop: 0 }}>Please enter a new picture URL</p>
 				<div className="edit-pfp-picture-container">
 					<img
@@ -25,6 +27,7 @@ const EditPfp = ({
 				<Input
 					placeholder="http://google.com/coolpic.jpg"
 					onChangeSetter={setInputPictureURL}
+					value={inputPictureURL}
 					fullWidth
 				></Input>
 				<div className="btn-bar" style={{ marginTop: '0.25rem'}}>

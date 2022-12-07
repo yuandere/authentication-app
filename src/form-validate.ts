@@ -13,7 +13,7 @@ export const passwordValidate = (password: string) => {
 }
 
 export const minValidate = (name: string) => {
-	if (name.length >= 1) {
+	if (/\S+/.test(name)) {
 		return true
 	}
 	return false

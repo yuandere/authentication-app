@@ -6,7 +6,7 @@ import AlertModal from './containers/AlertModal';
 import Navbar from './containers/Navbar';
 import UserInfoView from './containers/UserInfoView';
 import Dropdown from './components/Dropdown';
-import { emailValidate, passwordValidate } from './form-validate';
+import { emailValidate, passwordValidate, minValidate } from './form-validate';
 import './App.css';
 import EditPfp from './components/EditPfp';
 
@@ -21,8 +21,9 @@ function App() {
 	const [formEmailError, setFormEmailError] = useState<boolean>(false);
 	const [formPasswordError, setFormPasswordError] = useState<boolean>(false);
 	const [inputName, setInputName] = useState<string>('');
+	const [formNameError, setFormNameError] = useState<boolean>(false);
 	const [inputBio, setInputBio] = useState<string>('');
-	const [inputPhone, setInputPhone] = useState<number>(1);
+	const [inputPhone, setInputPhone] = useState<number | string>('');
 	const [inputPictureURL, setInputPictureURL] = useState<string>('');
 
 	// main view
@@ -30,19 +31,28 @@ function App() {
 	const [userInfo, setUserInfo] = useState<{
 		name: string;
 		bio: string;
-		phone: number;
+		phone: number | string;
 		email: string;
 		password: string;
 		picture_url: string;
 	}>({
-		name: 'Ana Srzentic',
-		bio: '10x fullstack engineer aka the value proposition hire',
-		phone: 1234567890,
-		email: 'ana_srz@email.com',
-		password: '***********',
-		picture_url:
-			'https://imgs.search.brave.com/vYImUzGEAiCtJV58T_sBGS7gJd-jiRcQyHDNpzseph8/rs:fit:1080:1080:1/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzVhLzcy/L2RkLzVhNzJkZGM0/YjBiZjRiZjkyNWQ4/ODUzODgzYTIyZDU0/LmpwZw',
+		name: '',
+		bio: '',
+		phone: '',
+		email: '',
+		password: '',
+		picture_url: '',
 	});
+
+	// {
+	// 	name: 'Ana Srzentic',
+	// 	bio: '10x fullstack engineer aka the value proposition hire',
+	// 	phone: 1234567890,
+	// 	email: 'ana_srz@email.com',
+	// 	password: '***********',
+	// 	picture_url:
+	// 		'https://imgs.search.brave.com/vYImUzGEAiCtJV58T_sBGS7gJd-jiRcQyHDNpzseph8/rs:fit:1080:1080:1/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzVhLzcy/L2RkLzVhNzJkZGM0/YjBiZjRiZjkyNWQ4/ODUzODgzYTIyZDU0/LmpwZw',
+	// }
 
 	// other app states
 	const [isThemeDark, setIsThemeDark] = useState<boolean>(false);
@@ -61,6 +71,10 @@ function App() {
 	});
 	const navOpenRef = useOnclickOutside(() => {
 		setIsNavMenuOpen(false);
+	});
+	const editPfpModalRef = useOnclickOutside(() => {
+		setIsEditPfpModalOpen(false);
+		// setInputPictureURL('');
 	});
 
 	const handleThemeChange = () => {
@@ -89,13 +103,21 @@ function App() {
 				setIsUserLoggedIn(true);
 				setProfileEditFlag(true);
 				setIsLoading(false);
+				setUserInfo({
+					name: '',
+					bio: '',
+					phone: '',
+					email: inputEmail,
+					password: inputPassword,
+					picture_url: '',
+				})
 			})
 			.catch((err) => {
 				setIsLoading(false);
 				setIsAlertModalOpen(true);
 				if (err.response.status === 403) {
 					setAlertModalContent({
-						title: ':P',
+						title: ':(',
 						message: 'That email is already in use!',
 					});
 					return;
@@ -128,6 +150,12 @@ function App() {
 				setUserInfo(res.data);
 				setIsUserLoggedIn(true);
 				setIsLoading(false);
+				setInputName(res.data.name);
+				setInputBio(res.data.bio);
+				setInputPhone(res.data.phone);
+				setInputEmail(res.data.email);
+				setInputPassword(res.data.password);
+				setInputPictureURL(res.data.picture_url);
 			})
 			.catch((err) => {
 				setIsLoading(false);
@@ -146,10 +174,60 @@ function App() {
 			});
 	};
 
+	const submitEditProfile = async () => {
+		if (!emailValidate(inputEmail)) {
+			setFormEmailError(true);
+		}
+		if (!passwordValidate(inputPassword)) {
+			setFormPasswordError(true);
+		}
+		if (!minValidate(inputName)) {
+			setFormNameError(true);
+		}
+		if (!emailValidate(inputEmail) || !passwordValidate(inputPassword) || !minValidate(inputName)) {
+			return;
+		}
+		setIsLoading(true);
+		axios
+			.post('http://localhost:5000/edit-profile', {
+				curr_email: userInfo.email,
+				name: inputName,
+				bio: inputBio,
+				phone: inputPhone,
+				email: inputEmail,
+				password: inputPassword,
+				picture_url: inputPictureURL
+			})
+			.then((res) => {
+				console.log(res.data);
+				setUserInfo(res.data.value);
+				setProfileEditFlag(false);
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				setIsLoading(false);
+				setIsAlertModalOpen(true);
+				if (err.response.status === 403) {
+					setAlertModalContent({
+						title: ':(',
+						message: 'That email is already in use!',
+					});
+					return;
+				}
+				setAlertModalContent({
+					title: err.code,
+					message: err.message,
+				});
+			});
+	}
+
 	const logout = () => {
 		setIsUserLoggedIn(false);
 		setIsNavMenuOpen(false);
 		setProfileEditFlag(false);
+		setFormEmailError(false);
+		setFormPasswordError(false);
+		setFormNameError(false);
 		setLoginFlag(true);
 	};
 
@@ -218,6 +296,7 @@ function App() {
 					setIsEditPfpModalOpen={setIsEditPfpModalOpen}
 					inputPictureURL={inputPictureURL}
 					userPictureURL={userInfo.picture_url}
+					editPfpModalRef={editPfpModalRef}
 				></EditPfp>
 			) : null}
 			{isUserLoggedIn ? (
@@ -241,6 +320,13 @@ function App() {
 							setInputPassword={setInputPassword}
 							setIsEditPfpModalOpen={setIsEditPfpModalOpen}
 							inputPictureURL={inputPictureURL}
+							formPasswordError={formPasswordError}
+							setFormPasswordError={setFormPasswordError}
+							formEmailError={formEmailError}
+							setFormEmailError={setFormEmailError}
+							formNameError={formNameError}
+							setFormNameError={setFormNameError}
+							submitEditProfile={submitEditProfile}
 						></UserInfoView>
 						<footer>
 							<p>
@@ -250,7 +336,6 @@ function App() {
 						</footer>
 					</div>
 					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
-					<button onClick={() => setIsUserLoggedIn(false)}>logout test</button>
 				</div>
 			) : (
 				<div className="container">
@@ -274,7 +359,13 @@ function App() {
 						<p>devChallenges.io</p>
 					</footer>
 					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
-					<button onClick={() => setIsUserLoggedIn(true)}>login test</button>
+					<button onClick={() => {
+						setIsUserLoggedIn(true)
+						setInputName(userInfo.name);
+						setInputBio(userInfo.bio);
+						setInputPhone(userInfo.phone);
+						setInputEmail(userInfo.email);
+						setInputPassword(userInfo.password);}}>login test</button>
 				</div>
 			)}
 		</div>

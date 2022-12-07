@@ -1,7 +1,7 @@
 type UserInfoProps = {
 	name: string;
 	bio: string;
-	phone: number;
+	phone: number | string;
 	email: string;
 	password: string;
 	picture_url: string;
@@ -44,7 +44,7 @@ const NavbarProps = ({
 				>
 					<img
 						src={
-							userInfo.picture_url
+							userInfo.picture_url != ''
 								? userInfo.picture_url
 								: 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU='
 						}
@@ -60,7 +60,9 @@ const NavbarProps = ({
 						}
 					}}
 				>
-					{userInfo.name}
+					{userInfo.name.length > 12
+						? userInfo.name.slice(0, 11) + '...'
+						: userInfo.name}
 				</p>
 				<div className="nav-dropdown-btn">
 					<span className="material-icons">

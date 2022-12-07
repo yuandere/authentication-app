@@ -3,7 +3,7 @@ import Input from '../components/Input';
 type UserInfoProps = {
 	name: string;
 	bio: string;
-	phone: number;
+	phone: number | string;
 	email: string;
 	password: string;
 	picture_url: string;
@@ -15,11 +15,18 @@ export interface UserInfoViewProps {
 	setProfileEditFlag: (profileEditFlag: boolean) => void;
 	setInputName: (inputName: string) => void;
 	setInputBio: (inputBio: string) => void;
-	setInputPhone: (inputPhone: number) => void;
+	setInputPhone: (inputPhone: number | string) => void;
 	setInputEmail: (inputEmail: string) => void;
 	setInputPassword: (inputPassword: string) => void;
 	setIsEditPfpModalOpen: (isEditPfpModalOpen: boolean) => void;
 	inputPictureURL: string;
+	formPasswordError: boolean;
+	setFormPasswordError: (formPasswordError: boolean) => void;
+	formEmailError: boolean;
+	setFormEmailError: (formEmailError: boolean) => void;
+	formNameError: boolean;
+	setFormNameError: (formNameError: boolean) => void;
+	submitEditProfile: () => void;
 }
 
 const UserInfoView = ({
@@ -33,6 +40,13 @@ const UserInfoView = ({
 	setInputPassword,
 	setIsEditPfpModalOpen,
 	inputPictureURL,
+	formPasswordError,
+	setFormPasswordError,
+	formEmailError,
+	setFormEmailError,
+	formNameError,
+	setFormNameError,
+	submitEditProfile,
 }: UserInfoViewProps) => {
 	return (
 		<>
@@ -61,9 +75,11 @@ const UserInfoView = ({
 									</div>
 									<img
 										src={
-											inputPictureURL === ''
+											inputPictureURL != ''
+												? inputPictureURL
+												: userInfo.picture_url != ''
 												? userInfo.picture_url
-												: inputPictureURL
+												: 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU='
 										}
 									></img>
 								</div>
@@ -75,38 +91,48 @@ const UserInfoView = ({
 								helperText="Name cannot be empty"
 								size={16}
 								autofocus
-								onChangeSetter={setInputEmail}
+								value={userInfo.name}
+								onChangeSetter={setInputName}
+								formNameError={formNameError}
+								setFormNameError={setFormNameError}
 							></Input>
 							<Input
 								placeholder="Enter your bio..."
 								labelText="Bio"
 								multiline
 								size={16}
-								onChangeSetter={setInputEmail}
+								value={userInfo.bio}
+								onChangeSetter={setInputBio}
 							></Input>
 							<Input
 								placeholder="Enter your phone..."
 								labelText="Phone"
 								helperText="Number is not valid"
 								size={16}
-								onChangeSetter={setInputEmail}
+								value={userInfo.phone}
+								onChangeSetter={setInputPhone}
 							></Input>
 							<Input
 								placeholder="Enter your email..."
 								labelText="Email"
 								helperText="Email is not valid"
 								size={16}
+								value={userInfo.email}
 								onChangeSetter={setInputEmail}
+								formEmailError={formEmailError}
+								setFormEmailError={setFormEmailError}
 							></Input>
 							<Input
 								placeholder="Enter your new password..."
 								labelText="Password"
 								helperText="Password must be at least 4 characters"
 								size={16}
-								autofocus
-								onChangeSetter={setInputEmail}
+								value={userInfo.password}
+								onChangeSetter={setInputPassword}
+								formPasswordError={formPasswordError}
+								setFormPasswordError={setFormPasswordError}
 							></Input>
-							<button>Save</button>
+							<button onClick={submitEditProfile}>Save</button>
 						</div>
 					</div>
 				</>
@@ -140,7 +166,13 @@ const UserInfoView = ({
 								<p className="text-light text-sm">PHOTO</p>
 								<div className="user-info-row-right">
 									<div className="user-info-pfp">
-										<img src={userInfo.picture_url}></img>
+										<img
+											src={
+												userInfo.picture_url != ''
+													? userInfo.picture_url
+													: 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU='
+											}
+										></img>
 									</div>
 								</div>
 							</div>

@@ -13,12 +13,15 @@ export interface InputProps {
 	pattern?: string;
 	title?: string;
 	required?: boolean;
+	value?: string | number;
 
-	onChangeSetter: any;
+	onChangeSetter: (unknown: any) => void;
 	formEmailError?: boolean;
 	formPasswordError?: boolean;
-	setFormEmailError?: any;
-	setFormPasswordError?: any;
+	setFormEmailError?: (formEmailError: boolean) => void;
+	setFormPasswordError?: (formPasswordError: boolean) => void;
+	formNameError?: boolean;
+	setFormNameError?: (formNameError: boolean) => void;
 }
 
 const Input = ({
@@ -36,12 +39,15 @@ const Input = ({
 	pattern,
 	title,
 	required,
+	value,
 
 	onChangeSetter,
 	formEmailError,
 	formPasswordError,
 	setFormEmailError,
 	setFormPasswordError,
+	formNameError,
+	setFormNameError
 }: InputProps) => {
 	let classString = '';
 	if (error) {
@@ -68,6 +74,8 @@ const Input = ({
 						disabled={disabled ? true : undefined}
 						title={title ? title : undefined}
 						maxLength={256}
+						defaultValue={value ? value : ''}
+						onLoad={() => onChangeSetter(value)}
 						onChange={(e) => onChangeSetter(e.target.value)}
 				></textarea>
 			) : (
@@ -83,14 +91,20 @@ const Input = ({
 						disabled={disabled ? true : undefined}
 						pattern={pattern ? pattern : undefined}
 						title={title ? title : undefined}
+						defaultValue={value ? value : ''}
+						onLoad={() => onChangeSetter(value)}
 						onChange={(e) => {
 							onChangeSetter(e.target.value);
-							if (formEmailError) {
+							if (formEmailError && setFormEmailError) {
 								setFormEmailError(false);
 								return;
 							}
-							if (formPasswordError) {
+							if (formPasswordError && setFormPasswordError) {
 								setFormPasswordError(false);
+								return;
+							}
+							if (formNameError && setFormNameError) {
+								setFormNameError(false);
 								return;
 							}
 						}}
@@ -98,7 +112,7 @@ const Input = ({
 				</div>
 			)}
 
-			{formEmailError || formPasswordError ? (
+			{formEmailError || formPasswordError || formNameError ? (
 				<div className="input-helper input-error">
 					<p>{helperText}</p>
 				</div>
