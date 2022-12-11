@@ -251,7 +251,11 @@ nav .nav-right,
 .socials-container {
 	justify-content: space-evenly;
 	img {
+		cursor: pointer;
 		margin: 0.5rem;
+		&:hover {
+			transform: scale(1.1);
+		}
 	}
 }
 

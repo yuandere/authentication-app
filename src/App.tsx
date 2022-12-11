@@ -6,9 +6,14 @@ import AlertModal from './containers/AlertModal';
 import Navbar from './containers/Navbar';
 import UserInfoView from './containers/UserInfoView';
 import Dropdown from './components/Dropdown';
-import { emailValidate, passwordValidate, minValidate } from './form-validate';
-import './App.css';
 import EditPfp from './components/EditPfp';
+import {
+	emailValidate,
+	passwordValidate,
+	minValidate,
+} from './util/form-validate';
+import { GITHUB_CLIENT_ID } from './util/constants';
+import './App.css';
 
 function App() {
 	// login view
@@ -35,6 +40,7 @@ function App() {
 		email: string;
 		password: string;
 		picture_url: string;
+		oauth_id?: string;
 	}>({
 		name: '',
 		bio: '',
@@ -42,17 +48,8 @@ function App() {
 		email: '',
 		password: '',
 		picture_url: '',
+		oauth_id: '',
 	});
-
-	// {
-	// 	name: 'Ana Srzentic',
-	// 	bio: '10x fullstack engineer aka the value proposition hire',
-	// 	phone: 1234567890,
-	// 	email: 'ana_srz@email.com',
-	// 	password: '***********',
-	// 	picture_url:
-	// 		'https://imgs.search.brave.com/vYImUzGEAiCtJV58T_sBGS7gJd-jiRcQyHDNpzseph8/rs:fit:1080:1080:1/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzVhLzcy/L2RkLzVhNzJkZGM0/YjBiZjRiZjkyNWQ4/ODUzODgzYTIyZDU0/LmpwZw',
-	// }
 
 	// other app states
 	const [isThemeDark, setIsThemeDark] = useState<boolean>(false);
@@ -65,6 +62,7 @@ function App() {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isEditPfpModalOpen, setIsEditPfpModalOpen] = useState<boolean>(false);
 	const navRightRef = useRef<HTMLDivElement>(null);
+	const dataFetchedRef = useRef<boolean>(false);
 
 	const alertModalRef = useOnclickOutside(() => {
 		setIsAlertModalOpen(false);
@@ -74,7 +72,7 @@ function App() {
 	});
 	const editPfpModalRef = useOnclickOutside(() => {
 		setIsEditPfpModalOpen(false);
-		// setInputPictureURL('');
+		setInputPictureURL('');
 	});
 
 	const handleThemeChange = () => {
@@ -110,7 +108,7 @@ function App() {
 					email: inputEmail,
 					password: inputPassword,
 					picture_url: '',
-				})
+				});
 			})
 			.catch((err) => {
 				setIsLoading(false);
@@ -132,11 +130,6 @@ function App() {
 	const submitLogin = async () => {
 		if (!emailValidate(inputEmail)) {
 			setFormEmailError(true);
-		}
-		if (!passwordValidate(inputPassword)) {
-			setFormPasswordError(true);
-		}
-		if (!emailValidate(inputEmail) || !passwordValidate(inputPassword)) {
 			return;
 		}
 		setIsLoading(true);
@@ -148,14 +141,14 @@ function App() {
 			.then((res) => {
 				console.log(res.data);
 				setUserInfo(res.data);
-				setIsUserLoggedIn(true);
-				setIsLoading(false);
 				setInputName(res.data.name);
 				setInputBio(res.data.bio);
 				setInputPhone(res.data.phone);
 				setInputEmail(res.data.email);
 				setInputPassword(res.data.password);
 				setInputPictureURL(res.data.picture_url);
+				setIsUserLoggedIn(true);
+				setIsLoading(false);
 			})
 			.catch((err) => {
 				setIsLoading(false);
@@ -175,7 +168,7 @@ function App() {
 	};
 
 	const submitEditProfile = async () => {
-		if (!emailValidate(inputEmail)) {
+		if (!userInfo.oauth_id && !emailValidate(inputEmail)) {
 			setFormEmailError(true);
 		}
 		if (!passwordValidate(inputPassword)) {
@@ -184,42 +177,80 @@ function App() {
 		if (!minValidate(inputName)) {
 			setFormNameError(true);
 		}
-		if (!emailValidate(inputEmail) || !passwordValidate(inputPassword) || !minValidate(inputName)) {
+		if (
+			(!userInfo.oauth_id && !emailValidate(inputEmail)) ||
+			!passwordValidate(inputPassword) ||
+			!minValidate(inputName)
+		) {
 			return;
 		}
 		setIsLoading(true);
-		axios
-			.post('http://localhost:5000/edit-profile', {
-				curr_email: userInfo.email,
-				name: inputName,
-				bio: inputBio,
-				phone: inputPhone,
-				email: inputEmail,
-				password: inputPassword,
-				picture_url: inputPictureURL
-			})
-			.then((res) => {
-				console.log(res.data);
-				setUserInfo(res.data.value);
-				setProfileEditFlag(false);
-				setIsLoading(false);
-			})
-			.catch((err) => {
-				setIsLoading(false);
-				setIsAlertModalOpen(true);
-				if (err.response.status === 403) {
+		if (userInfo.oauth_id) {
+			axios
+				.post('http://localhost:5000/edit-profile', {
+					oauth_id: userInfo.oauth_id,
+					name: inputName,
+					bio: inputBio,
+					phone: inputPhone,
+					email: inputEmail,
+					password: inputPassword,
+					picture_url: inputPictureURL,
+				})
+				.then((res) => {
+					console.log(res.data);
+					setUserInfo(res.data.value);
+					setProfileEditFlag(false);
+					setIsLoading(false);
+				})
+				.catch((err) => {
+					setIsLoading(false);
+					setIsAlertModalOpen(true);
+					if (err.response.status === 403) {
+						setAlertModalContent({
+							title: ':(',
+							message: 'Unable to update profile!',
+						});
+						return;
+					}
 					setAlertModalContent({
-						title: ':(',
-						message: 'That email is already in use!',
+						title: err.code,
+						message: err.message,
 					});
-					return;
-				}
-				setAlertModalContent({
-					title: err.code,
-					message: err.message,
 				});
-			});
-	}
+		} else {
+			axios
+				.post('http://localhost:5000/edit-profile', {
+					curr_email: userInfo.email,
+					name: inputName,
+					bio: inputBio,
+					phone: inputPhone,
+					email: inputEmail,
+					password: inputPassword,
+					picture_url: inputPictureURL,
+				})
+				.then((res) => {
+					console.log(res.data);
+					setUserInfo(res.data.value);
+					setProfileEditFlag(false);
+					setIsLoading(false);
+				})
+				.catch((err) => {
+					setIsLoading(false);
+					setIsAlertModalOpen(true);
+					if (err.response.status === 403) {
+						setAlertModalContent({
+							title: ':(',
+							message: 'Unable to update profile!',
+						});
+						return;
+					}
+					setAlertModalContent({
+						title: err.code,
+						message: err.message,
+					});
+				});
+		}
+	};
 
 	const logout = () => {
 		setIsUserLoggedIn(false);
@@ -229,6 +260,13 @@ function App() {
 		setFormPasswordError(false);
 		setFormNameError(false);
 		setLoginFlag(true);
+		setInputName('');
+		setInputBio('');
+		setInputPhone('');
+		setInputEmail('');
+		setInputPassword('');
+		setInputPictureURL('');
+		window.location.href = 'http://localhost:5173';
 	};
 
 	const handleNavRefLocation = () => {
@@ -253,6 +291,39 @@ function App() {
 			);
 		}
 	};
+
+	useEffect(() => {
+		const auth_code = new URLSearchParams(window.location.search).get('code');
+		if (!auth_code || dataFetchedRef.current) {
+			return;
+		}
+		dataFetchedRef.current = true;
+		setIsLoading(true);
+		axios
+			.get(`http://localhost:5000/oauth/redirect?code=${auth_code}`)
+			.then((res) => {
+				setIsUserLoggedIn(true);
+				setProfileEditFlag(true);
+				setIsLoading(false);
+				setUserInfo(res.data);
+				console.log(res.data);
+				setInputName(res.data.name);
+				setInputBio(res.data.bio);
+				setInputPhone(res.data.phone);
+				setInputEmail(res.data.email);
+				setInputPassword(res.data.password);
+				setInputPictureURL(res.data.picture_url);
+			})
+			.catch((err) => {
+				setIsLoading(false);
+				setIsAlertModalOpen(true);
+				setAlertModalContent({
+					title: err.code,
+					message: err.message,
+				});
+				console.log('error:', err);
+			});
+	}, []);
 
 	useEffect(() => {
 		const matchesDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -351,6 +422,7 @@ function App() {
 						formPasswordError={formPasswordError}
 						setFormEmailError={setFormEmailError}
 						setFormPasswordError={setFormPasswordError}
+						GITHUB_CLIENT_ID={GITHUB_CLIENT_ID}
 					></Login>
 					<footer>
 						<p>
@@ -359,13 +431,18 @@ function App() {
 						<p>devChallenges.io</p>
 					</footer>
 					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
-					<button onClick={() => {
-						setIsUserLoggedIn(true)
-						setInputName(userInfo.name);
-						setInputBio(userInfo.bio);
-						setInputPhone(userInfo.phone);
-						setInputEmail(userInfo.email);
-						setInputPassword(userInfo.password);}}>login test</button>
+					<button
+						onClick={() => {
+							setIsUserLoggedIn(true);
+							setInputName(userInfo.name);
+							setInputBio(userInfo.bio);
+							setInputPhone(userInfo.phone);
+							setInputEmail(userInfo.email);
+							setInputPassword(userInfo.password);
+						}}
+					>
+						login test
+					</button>
 				</div>
 			)}
 		</div>

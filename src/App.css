@@ -258,7 +258,11 @@ nav .nav-right,
   justify-content: space-evenly;
 }
 .socials-container img {
+  cursor: pointer;
   margin: 0.5rem;
+}
+.socials-container img:hover {
+  transform: scale(1.1);
 }
 
 footer {

@@ -1,6 +1,5 @@
 import Input from '../components/Input';
 
-
 export interface LoginProps {
 	isThemeDark: boolean;
 	loginFlag: boolean;
@@ -13,6 +12,8 @@ export interface LoginProps {
 	formPasswordError: boolean;
 	setFormEmailError: (formEmailError: boolean) => void;
 	setFormPasswordError: (formPasswordError: boolean) => void;
+
+	GITHUB_CLIENT_ID: any;
 }
 
 const Login = ({
@@ -26,9 +27,9 @@ const Login = ({
 	formEmailError,
 	formPasswordError,
 	setFormEmailError,
-	setFormPasswordError
+	setFormPasswordError,
+	GITHUB_CLIENT_ID,
 }: LoginProps) => {
-
 	return (
 		<div className="login-container">
 			<div className="login-container-inner">
@@ -57,7 +58,7 @@ const Login = ({
 					)}
 					<Input
 						placeholder="Email"
-						helperText='Email is not valid'
+						helperText="Email is not valid"
 						iconLeft="email"
 						size={16}
 						autofocus
@@ -67,11 +68,11 @@ const Login = ({
 					></Input>
 					<Input
 						placeholder="Password"
-						helperText='Password must be at least 4 characters'
+						helperText="Password must be at least 4 characters"
 						iconLeft="lock"
 						size={16}
 						onChangeSetter={setInputPassword}
-						formPasswordError={formPasswordError}
+						formPasswordError={!loginFlag ? formPasswordError : false}
 						setFormPasswordError={setFormPasswordError}
 					></Input>
 
@@ -92,7 +93,13 @@ const Login = ({
 						<img src="./src/assets/Google.svg"></img>
 						<img src="./src/assets/Facebook.svg"></img>
 						<img src="./src/assets/Twitter.svg"></img>
-						<img src="./src/assets/Github.svg"></img>
+						<a
+							href={`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`}
+						>
+							<img
+								src="./src/assets/Github.svg"
+							></img>
+						</a>
 					</div>
 					<p className="login-bottom-element">
 						Don't have an account yet?&nbsp;
