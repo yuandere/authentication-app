@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import useOnclickOutside from 'react-cool-onclickoutside';
+import { useGoogleLogin } from '@react-oauth/google';
 import Login from './containers/Login';
 import AlertModal from './containers/AlertModal';
 import Navbar from './containers/Navbar';
@@ -171,7 +172,7 @@ function App() {
 		if (!userInfo.oauth_id && !emailValidate(inputEmail)) {
 			setFormEmailError(true);
 		}
-		if (!passwordValidate(inputPassword)) {
+		if (!userInfo.oauth_id && !passwordValidate(inputPassword)) {
 			setFormPasswordError(true);
 		}
 		if (!minValidate(inputName)) {
@@ -179,7 +180,7 @@ function App() {
 		}
 		if (
 			(!userInfo.oauth_id && !emailValidate(inputEmail)) ||
-			!passwordValidate(inputPassword) ||
+			(!userInfo.oauth_id && !passwordValidate(inputPassword)) ||
 			!minValidate(inputName)
 		) {
 			return;
@@ -252,20 +253,28 @@ function App() {
 		}
 	};
 
+	const googleLogin = useGoogleLogin({
+		onSuccess: async ({ code }) => {
+			const res = await axios.post('http://localhost:5000/oauth/google', {
+				code,
+			});
+			console.log('user data:', res.data);
+			// console.log('tokens found: ', res.data.tokens)
+			setIsUserLoggedIn(true);
+			// setProfileEditFlag(true);
+			setIsLoading(false);
+			setUserInfo(res.data);
+			setInputName(res.data.name);
+			setInputBio(res.data.bio);
+			setInputPhone(res.data.phone);
+			setInputEmail(res.data.email);
+			setInputPassword(res.data.password);
+			setInputPictureURL(res.data.picture_url);
+		},
+		flow: 'auth-code',
+	});
+
 	const logout = () => {
-		setIsUserLoggedIn(false);
-		setIsNavMenuOpen(false);
-		setProfileEditFlag(false);
-		setFormEmailError(false);
-		setFormPasswordError(false);
-		setFormNameError(false);
-		setLoginFlag(true);
-		setInputName('');
-		setInputBio('');
-		setInputPhone('');
-		setInputEmail('');
-		setInputPassword('');
-		setInputPictureURL('');
 		window.location.href = 'http://localhost:5173';
 	};
 
@@ -292,18 +301,19 @@ function App() {
 		}
 	};
 
+	// github oauth
 	useEffect(() => {
 		const auth_code = new URLSearchParams(window.location.search).get('code');
-		if (!auth_code || dataFetchedRef.current) {
+		if (!auth_code || auth_code.length != 20 || dataFetchedRef.current) {
 			return;
 		}
 		dataFetchedRef.current = true;
 		setIsLoading(true);
 		axios
-			.get(`http://localhost:5000/oauth/redirect?code=${auth_code}`)
+			.get(`http://localhost:5000/oauth/github?code=${auth_code}`)
 			.then((res) => {
 				setIsUserLoggedIn(true);
-				setProfileEditFlag(true);
+				// setProfileEditFlag(true);
 				setIsLoading(false);
 				setUserInfo(res.data);
 				console.log(res.data);
@@ -422,7 +432,9 @@ function App() {
 						formPasswordError={formPasswordError}
 						setFormEmailError={setFormEmailError}
 						setFormPasswordError={setFormPasswordError}
+						googleLogin={googleLogin}
 						GITHUB_CLIENT_ID={GITHUB_CLIENT_ID}
+						setIsLoading={setIsLoading}
 					></Login>
 					<footer>
 						<p>

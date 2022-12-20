@@ -12,8 +12,9 @@ export interface LoginProps {
 	formPasswordError: boolean;
 	setFormEmailError: (formEmailError: boolean) => void;
 	setFormPasswordError: (formPasswordError: boolean) => void;
-
+	googleLogin: () => void;
 	GITHUB_CLIENT_ID: any;
+	setIsLoading: (isLoading: boolean) => void;
 }
 
 const Login = ({
@@ -28,7 +29,9 @@ const Login = ({
 	formPasswordError,
 	setFormEmailError,
 	setFormPasswordError,
+	googleLogin,
 	GITHUB_CLIENT_ID,
+	setIsLoading,
 }: LoginProps) => {
 	return (
 		<div className="login-container">
@@ -90,15 +93,19 @@ const Login = ({
 				<div className="login-bottom">
 					<p>or continue with one of these</p>
 					<div className="socials-container">
-						<img src="./src/assets/Google.svg"></img>
+						<img
+							src="./src/assets/Google.svg"
+							onClick={() => {
+								setIsLoading(true);
+								googleLogin();
+							}}
+						></img>
 						<img src="./src/assets/Facebook.svg"></img>
 						<img src="./src/assets/Twitter.svg"></img>
 						<a
 							href={`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`}
 						>
-							<img
-								src="./src/assets/Github.svg"
-							></img>
+							<img src="./src/assets/Github.svg"></img>
 						</a>
 					</div>
 					<p className="login-bottom-element">
