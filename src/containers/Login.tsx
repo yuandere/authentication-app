@@ -1,3 +1,9 @@
+import { v4 as uuidv4 } from 'uuid';
+import {
+	GITHUB_CLIENT_ID,
+	FACEBOOK_CLIENT_ID,
+	REDIRECT_URI,
+} from '../util/constants';
 import Input from '../components/Input';
 
 export interface LoginProps {
@@ -13,7 +19,6 @@ export interface LoginProps {
 	setFormEmailError: (formEmailError: boolean) => void;
 	setFormPasswordError: (formPasswordError: boolean) => void;
 	googleLogin: () => void;
-	GITHUB_CLIENT_ID: any;
 	setIsLoading: (isLoading: boolean) => void;
 }
 
@@ -30,9 +35,22 @@ const Login = ({
 	setFormEmailError,
 	setFormPasswordError,
 	googleLogin,
-	GITHUB_CLIENT_ID,
 	setIsLoading,
 }: LoginProps) => {
+	let FB_OAUTH_STATE: any = '';
+	const setFbStateString = () => {
+		console.log('login prop rendered')
+		const stored = sessionStorage.getItem('fbstate');
+		if (stored === null) {
+			FB_OAUTH_STATE = uuidv4();
+			console.log(FB_OAUTH_STATE);
+			sessionStorage.setItem('fbstate', FB_OAUTH_STATE)
+		} else {
+			FB_OAUTH_STATE = stored
+		}
+	}
+	setFbStateString();
+
 	return (
 		<div className="login-container">
 			<div className="login-container-inner">
@@ -100,7 +118,12 @@ const Login = ({
 								googleLogin();
 							}}
 						></img>
-						<img src="./src/assets/Facebook.svg"></img>
+						<a
+							href={`https://www.facebook.com/v15.0/dialog/oauth?client_id=${FACEBOOK_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&state=${FB_OAUTH_STATE}`}
+						>
+							<img src="./src/assets/Facebook.svg"></img>
+						</a>
+
 						<img src="./src/assets/Twitter.svg"></img>
 						<a
 							href={`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`}

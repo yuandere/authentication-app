@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { useGoogleLogin } from '@react-oauth/google';
+// import { v4 as uuidv4 } from 'uuid';
 import Login from './containers/Login';
 import AlertModal from './containers/AlertModal';
 import Navbar from './containers/Navbar';
@@ -13,7 +14,6 @@ import {
 	passwordValidate,
 	minValidate,
 } from './util/form-validate';
-import { GITHUB_CLIENT_ID } from './util/constants';
 import './App.css';
 
 function App() {
@@ -62,8 +62,10 @@ function App() {
 	const [isNavMenuOpen, setIsNavMenuOpen] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isEditPfpModalOpen, setIsEditPfpModalOpen] = useState<boolean>(false);
+	const [oauthState, setOauthState] = useState<string>('');
 	const navRightRef = useRef<HTMLDivElement>(null);
-	const dataFetchedRef = useRef<boolean>(false);
+	const dataFetchedGithubRef = useRef<boolean>(false);
+	const dataFetchedFacebookRef = useRef<boolean>(false);
 
 	const alertModalRef = useOnclickOutside(() => {
 		setIsAlertModalOpen(false);
@@ -304,10 +306,10 @@ function App() {
 	// github oauth
 	useEffect(() => {
 		const auth_code = new URLSearchParams(window.location.search).get('code');
-		if (!auth_code || auth_code.length != 20 || dataFetchedRef.current) {
-			return;
+		if (!auth_code || auth_code.length != 20 || dataFetchedGithubRef.current) {
+			return
 		}
-		dataFetchedRef.current = true;
+		dataFetchedGithubRef.current = true;
 		setIsLoading(true);
 		axios
 			.get(`http://localhost:5000/oauth/github?code=${auth_code}`)
@@ -334,6 +336,40 @@ function App() {
 				console.log('error:', err);
 			});
 	}, []);
+
+	//facebook oauth
+	useEffect(() => {
+		const auth_code = new URLSearchParams(window.location.search).get('code');
+		if (!auth_code || auth_code.length < 100 || dataFetchedFacebookRef.current) {
+			return
+		}
+		dataFetchedFacebookRef.current = true;
+		setIsLoading(true);
+		axios
+		.get(`http://localhost:5000/oauth/facebook?code=${auth_code}`)
+		.then((res) => {
+			setIsUserLoggedIn(true);
+			// setProfileEditFlag(true);
+			setIsLoading(false);
+			setUserInfo(res.data);
+			console.log(res.data);
+			setInputName(res.data.name);
+			setInputBio(res.data.bio);
+			setInputPhone(res.data.phone);
+			setInputEmail(res.data.email);
+			setInputPassword(res.data.password);
+			setInputPictureURL(res.data.picture_url);
+		})
+		.catch((err) => {
+			setIsLoading(false);
+			setIsAlertModalOpen(true);
+			setAlertModalContent({
+				title: err.code,
+				message: err.message,
+			});
+			console.log('error:', err);
+		});
+	}, [])
 
 	useEffect(() => {
 		const matchesDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -433,7 +469,6 @@ function App() {
 						setFormEmailError={setFormEmailError}
 						setFormPasswordError={setFormPasswordError}
 						googleLogin={googleLogin}
-						GITHUB_CLIENT_ID={GITHUB_CLIENT_ID}
 						setIsLoading={setIsLoading}
 					></Login>
 					<footer>
