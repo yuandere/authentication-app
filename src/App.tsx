@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { useGoogleLogin } from '@react-oauth/google';
+import getPkce from 'oauth-pkce';
 // import { v4 as uuidv4 } from 'uuid';
 import Login from './containers/Login';
 import AlertModal from './containers/AlertModal';
@@ -49,7 +50,6 @@ function App() {
 		email: '',
 		password: '',
 		picture_url: '',
-		oauth_id: '',
 	});
 
 	// other app states
@@ -62,10 +62,16 @@ function App() {
 	const [isNavMenuOpen, setIsNavMenuOpen] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isEditPfpModalOpen, setIsEditPfpModalOpen] = useState<boolean>(false);
-	const [oauthState, setOauthState] = useState<string>('');
+	const [pkce, setPkce] = useState<{ verifier: string; challenge: string }>({
+		verifier: '',
+		challenge: '',
+	});
 	const navRightRef = useRef<HTMLDivElement>(null);
+	// these prevent useeffects from being called twice while in development under react.strictmode
 	const dataFetchedGithubRef = useRef<boolean>(false);
 	const dataFetchedFacebookRef = useRef<boolean>(false);
+	const dataFetchedTwitterRef = useRef<boolean>(false);
+	const pkceGeneratedRef = useRef<boolean>(false);
 
 	const alertModalRef = useOnclickOutside(() => {
 		setIsAlertModalOpen(false);
@@ -255,6 +261,7 @@ function App() {
 		}
 	};
 
+	// google oauth
 	const googleLogin = useGoogleLogin({
 		onSuccess: async ({ code }) => {
 			const res = await axios.post('http://localhost:5000/oauth/google', {
@@ -306,8 +313,11 @@ function App() {
 	// github oauth
 	useEffect(() => {
 		const auth_code = new URLSearchParams(window.location.search).get('code');
-		if (!auth_code || auth_code.length != 20 || dataFetchedGithubRef.current) {
-			return
+		if (
+			window.sessionStorage.getItem('oauthmethod') != 'github' ||
+			dataFetchedGithubRef.current || !auth_code
+		) {
+			return;
 		}
 		dataFetchedGithubRef.current = true;
 		setIsLoading(true);
@@ -337,39 +347,94 @@ function App() {
 			});
 	}, []);
 
-	//facebook oauth
+	// facebook oauth
 	useEffect(() => {
 		const auth_code = new URLSearchParams(window.location.search).get('code');
-		if (!auth_code || auth_code.length < 100 || dataFetchedFacebookRef.current) {
-			return
+		if (
+			window.sessionStorage.getItem('oauthmethod') != 'facebook' ||
+			dataFetchedFacebookRef.current || !auth_code
+		) {
+			return;
 		}
 		dataFetchedFacebookRef.current = true;
 		setIsLoading(true);
 		axios
-		.get(`http://localhost:5000/oauth/facebook?code=${auth_code}`)
-		.then((res) => {
-			setIsUserLoggedIn(true);
-			// setProfileEditFlag(true);
-			setIsLoading(false);
-			setUserInfo(res.data);
-			console.log(res.data);
-			setInputName(res.data.name);
-			setInputBio(res.data.bio);
-			setInputPhone(res.data.phone);
-			setInputEmail(res.data.email);
-			setInputPassword(res.data.password);
-			setInputPictureURL(res.data.picture_url);
-		})
-		.catch((err) => {
-			setIsLoading(false);
-			setIsAlertModalOpen(true);
-			setAlertModalContent({
-				title: err.code,
-				message: err.message,
+			.get(`http://localhost:5000/oauth/facebook?code=${auth_code}`)
+			.then((res) => {
+				setIsUserLoggedIn(true);
+				// setProfileEditFlag(true);
+				setIsLoading(false);
+				setUserInfo(res.data);
+				console.log(res.data);
+				setInputName(res.data.name);
+				setInputBio(res.data.bio);
+				setInputPhone(res.data.phone);
+				setInputEmail(res.data.email);
+				setInputPassword(res.data.password);
+				setInputPictureURL(res.data.picture_url);
+			})
+			.catch((err) => {
+				setIsLoading(false);
+				setIsAlertModalOpen(true);
+				setAlertModalContent({
+					title: err.code,
+					message: err.message,
+				});
+				console.log('error:', err);
 			});
-			console.log('error:', err);
+	}, []);
+
+	// twitter oauth
+	useEffect(() => {
+		const auth_code = new URLSearchParams(window.location.search).get('code');
+		if (
+			window.sessionStorage.getItem('oauthmethod') != 'twitter' ||
+			dataFetchedTwitterRef.current || !auth_code
+		) {
+			return;
+		}
+		dataFetchedTwitterRef.current = true;
+		setIsLoading(true);
+		axios
+			.get(
+				`http://localhost:5000/oauth/twitter?code=${auth_code}&verifier=${pkce.verifier}`
+			)
+			.then((res) => {
+				setIsUserLoggedIn(true);
+				// setProfileEditFlag(true);
+				setIsLoading(false);
+				setUserInfo(res.data);
+				console.log(res.data);
+				setInputName(res.data.name);
+				setInputBio(res.data.bio);
+				setInputPhone(res.data.phone);
+				setInputEmail(res.data.email);
+				setInputPassword(res.data.password);
+				setInputPictureURL(res.data.picture_url);
+			})
+			.catch((err) => {
+				setIsLoading(false);
+				setIsAlertModalOpen(true);
+				setAlertModalContent({
+					title: err.code,
+					message: err.message,
+				});
+				console.log('error:', err);
+			});
+	}, []);
+
+	useEffect(() => {
+		if (pkceGeneratedRef.current) {
+			return
+		}
+		pkceGeneratedRef.current = true;
+		getPkce(43, (error, { verifier, challenge }) => {
+			if (!error) {
+				// console.log({ verifier, challenge });
+				setPkce({ verifier: verifier, challenge: challenge });
+			}
 		});
-	}, [])
+	}, []);
 
 	useEffect(() => {
 		const matchesDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -452,7 +517,6 @@ function App() {
 							<p>devChallenges.io</p>
 						</footer>
 					</div>
-					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
 				</div>
 			) : (
 				<div className="container">
@@ -470,6 +534,7 @@ function App() {
 						setFormPasswordError={setFormPasswordError}
 						googleLogin={googleLogin}
 						setIsLoading={setIsLoading}
+						pkce={pkce}
 					></Login>
 					<footer>
 						<p>
@@ -477,19 +542,6 @@ function App() {
 						</p>
 						<p>devChallenges.io</p>
 					</footer>
-					<button onClick={() => setIsAlertModalOpen(true)}>modal test</button>
-					<button
-						onClick={() => {
-							setIsUserLoggedIn(true);
-							setInputName(userInfo.name);
-							setInputBio(userInfo.bio);
-							setInputPhone(userInfo.phone);
-							setInputEmail(userInfo.email);
-							setInputPassword(userInfo.password);
-						}}
-					>
-						login test
-					</button>
 				</div>
 			)}
 		</div>
