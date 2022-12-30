@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-oauth/google": "^0.5.1",
     "axios": "^1.2.0",
     "oauth-pkce": "^0.0.6",
     "react": "^18.2.0",

@@ -4,10 +4,11 @@ import {
 	FACEBOOK_CLIENT_ID,
 	TWITTER_CLIENT_ID,
 	REDIRECT_URI,
+	GOOGLE_CLIENT_ID,
 } from '../util/constants';
 import Input from '../components/Input';
 
-const REDIRECT_URL_NGROK = 'https://52fc-89-187-187-89.ngrok.io';
+const REDIRECT_URL_NGROK = 'https://3206-104-59-98-29.ngrok.io';
 
 export interface LoginProps {
 	isThemeDark: boolean;
@@ -21,8 +22,6 @@ export interface LoginProps {
 	formPasswordError: boolean;
 	setFormEmailError: (formEmailError: boolean) => void;
 	setFormPasswordError: (formPasswordError: boolean) => void;
-	googleLogin: () => void;
-	setIsLoading: (isLoading: boolean) => void;
 	pkce: any;
 }
 
@@ -38,59 +37,13 @@ const Login = ({
 	formPasswordError,
 	setFormEmailError,
 	setFormPasswordError,
-	googleLogin,
-	setIsLoading,
 	pkce,
 }: LoginProps) => {
-	let FB_OAUTH_STATE: any = '';
-	const setFbStateString = () => {
-		const stored = sessionStorage.getItem('fbstate');
-		if (stored === null) {
-			FB_OAUTH_STATE = uuidv4();
-			sessionStorage.setItem('fbstate', FB_OAUTH_STATE);
-		} else {
-			FB_OAUTH_STATE = stored;
-		}
+	let GEN_STATE: any = '';
+	const generateState = () => {
+		GEN_STATE = uuidv4();
+		sessionStorage.setItem('genstate', GEN_STATE);
 	};
-
-	let TWITTER_OAUTH_STATE: any = '';
-	const setTwitterStateString = () => {
-		const stored = sessionStorage.getItem('twitterstate');
-		sessionStorage.setItem('oauthmethod', 'twitter');
-		if (stored === null) {
-			TWITTER_OAUTH_STATE = uuidv4();
-			sessionStorage.setItem('twitterstate', TWITTER_OAUTH_STATE);
-		} else {
-			TWITTER_OAUTH_STATE = stored;
-		}
-	};
-
-	// let TWITTER_OAUTH_VERIFIER: any = '';
-	// let TWITTER_OAUTH_CHALLENGE: any = '';
-	// const setTwitterCodeChallenge = () => {
-	// 	const stored = sessionStorage.getItem('twitterchallenge');
-	// 	if (stored === null) {
-	// 		// TWITTER_OAUTH_VERIFIER = uuidv4();
-	// 		// TWITTER_OAUTH_CHALLENGE = btoa(sha256(TWITTER_OAUTH_VERIFIER).toString())
-	// 		// .replace(/\+/g, '-')
-	// 		// .replace(/\//g, '_')
-	// 		// .replace(/=+$/, '');
-
-	// 		sessionStorage.setItem('twitterverifier', TWITTER_OAUTH_VERIFIER);
-	// 		sessionStorage.setItem('twitterchallenge', TWITTER_OAUTH_CHALLENGE);
-	// 	} else {
-	// 		TWITTER_OAUTH_VERIFIER = sessionStorage.getItem('twitterverifier');
-	// 		TWITTER_OAUTH_CHALLENGE = stored;
-	// 	}
-	// };
-
-
-	// let TEST_VERIFIER = uuidv4();
-	// let TEST_CHALLENGE = btoa(sha256(TEST_VERIFIER).toString())
-	// 	.replace(/\+/g, '-')
-	// 	.replace(/\//g, '_')
-	// 	.replace(/=+$/, '');
-	// console.log('twitter oauth verifier, challenge:', TEST_VERIFIER,TEST_CHALLENGE);
 
 	return (
 		<div className="login-container">
@@ -155,28 +108,30 @@ const Login = ({
 						<img
 							src="./src/assets/Google.svg"
 							onClick={() => {
-								googleLogin();
+								generateState();
+								sessionStorage.setItem('oauthmethod', 'google');
+								window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.profile&response_type=code&state=${GEN_STATE}&redirect_uri=${REDIRECT_URI}&client_id=${GOOGLE_CLIENT_ID}`;
 							}}
 						></img>
 						<img
 							src="./src/assets/Facebook.svg"
 							onClick={() => {
-								setFbStateString();
+								generateState();
 								sessionStorage.setItem('oauthmethod', 'facebook');
-								window.location.href = `https://www.facebook.com/v15.0/dialog/oauth?client_id=${FACEBOOK_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&state=${FB_OAUTH_STATE}`;
+								window.location.href = `https://www.facebook.com/v15.0/dialog/oauth?client_id=${FACEBOOK_CLIENT_ID}&redirect_uri=${REDIRECT_URI + '/'}&state=${GEN_STATE}`;
 							}}
 						></img>
 						<img src="./src/assets/Twitter.svg" onClick={() => {
-							setTwitterStateString();
-							// setTwitterCodeChallenge();
+							generateState();
 							sessionStorage.setItem('oauthmethod', 'twitter');
-							window.location.href = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${REDIRECT_URL_NGROK}&scope=tweet.read%20users.read%20offline.access&state=${TWITTER_OAUTH_STATE}&code_challenge=${pkce.challenge}&code_challenge_method=S256`
+							window.location.href = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${REDIRECT_URL_NGROK}&scope=tweet.read%20users.read%20offline.access&state=${GEN_STATE}&code_challenge=${pkce.challenge}&code_challenge_method=S256`
 						}}></img>
 						<img
 							src="./src/assets/Github.svg"
 							onClick={() => {
+								generateState();
 								sessionStorage.setItem('oauthmethod', 'github');
-								window.location.href = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`;
+								window.location.href = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&state=${GEN_STATE}&redirect_uri=${REDIRECT_URI}`;
 							}}
 						></img>
 					</div>
