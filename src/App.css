@@ -54,6 +54,7 @@
 }
 .btn-hollow:hover {
   background: var(--grey-3);
+  border: 1px solid var(--grey-3);
   color: white;
 }
 
@@ -138,6 +139,18 @@ nav .nav-right,
   background: white;
   border-radius: 20px;
   padding: 2rem 2.5rem;
+}
+
+.alert-modal-error .alert-modal-inner {
+  border: 2px solid red;
+}
+
+.alert-modal-success .alert-modal-inner {
+  border: 2px solid green;
+}
+
+.alert-modal-caution .alert-modal-inner {
+  border: 2px solid yellow;
 }
 
 .login-container {
@@ -522,6 +535,16 @@ nav .nav-dropdown-btn span {
      object-fit: cover;
 }
 
+#delete-btn {
+  width: 8.5rem;
+  background-color: var(--red-1);
+  margin-right: 0.5rem;
+}
+
+#delete-btn:hover {
+  background-color: rgb(228, 9, 9);
+}
+
 @media only screen and (max-width: 1600px) {
   .container {
     width: 30%;
@@ -615,7 +638,8 @@ nav .nav-dropdown-btn span {
     background: #242424;
     color: rgba(255, 255, 255, 0.87);
   }
-  .input-container input {
+  .input-container input,
+.input-component textarea {
     background: none;
   }
   .nav-dropdown {

@@ -89,6 +89,7 @@ const Login = ({
 						onChangeSetter={setInputPassword}
 						formPasswordError={!loginFlag ? formPasswordError : false}
 						setFormPasswordError={setFormPasswordError}
+						enterSubmit={loginFlag ? submitLogin : submitRegister}
 					></Input>
 
 					{loginFlag ? (

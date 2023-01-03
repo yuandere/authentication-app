@@ -14,6 +14,7 @@ export interface InputProps {
 	title?: string;
 	required?: boolean;
 	value?: string | number;
+	enterSubmit?: (arg: void) => void;
 
 	onChangeSetter: (unknown: any) => void;
 	formEmailError?: boolean;
@@ -40,6 +41,7 @@ const Input = ({
 	title,
 	required,
 	value,
+	enterSubmit,
 
 	onChangeSetter,
 	formEmailError,
@@ -108,6 +110,12 @@ const Input = ({
 								return;
 							}
 						}}
+						onKeyDown={enterSubmit ? ((e) => {
+							if (e.key === 'Enter') {
+								e.preventDefault();
+								enterSubmit();
+							}
+						}) : undefined}
 					></input>
 				</div>
 			)}

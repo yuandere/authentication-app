@@ -13,6 +13,7 @@ import {
 	passwordValidate,
 	minValidate,
 } from './util/form-validate';
+import { API_BASE_URL, REDIRECT_URI } from './util/constants';
 import './App.css';
 
 function App() {
@@ -33,6 +34,8 @@ function App() {
 
 	// main view
 	const [profileEditFlag, setProfileEditFlag] = useState<boolean>(false);
+	const [isEditPfpModalOpen, setIsEditPfpModalOpen] = useState<boolean>(false);
+	const [deleteAccountFlag, setDeleteAccountFlag] = useState<boolean>(false);
 	const [userInfo, setUserInfo] = useState<{
 		name: string;
 		bio: string;
@@ -40,6 +43,8 @@ function App() {
 		email: string;
 		password: string;
 		picture_url: string;
+		new_user: boolean;
+		oauth_login: boolean;
 		oauth_id?: string;
 	}>({
 		name: '',
@@ -48,18 +53,20 @@ function App() {
 		email: '',
 		password: '',
 		picture_url: '',
+		new_user: false,
+		oauth_login: false,
 	});
 
 	// other app states
 	const [isThemeDark, setIsThemeDark] = useState<boolean>(false);
 	const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
-	const [alertModalContent, setAlertModalContent] = useState<{
-		title: string;
-		message: string;
+	const [alertModalOptions, setAlertModalOptions] = useState<{
+		title?: string;
+		message?: string;
+		style?: string;
 	}>({ title: 'alert title', message: 'alert message' });
 	const [isNavMenuOpen, setIsNavMenuOpen] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [isEditPfpModalOpen, setIsEditPfpModalOpen] = useState<boolean>(false);
 	const [pkce, setPkce] = useState<{ verifier: string; challenge: string }>({
 		verifier: '',
 		challenge: '',
@@ -96,7 +103,7 @@ function App() {
 		}
 		setIsLoading(true);
 		axios
-			.post('http://localhost:5000/register', {
+			.post(`${API_BASE_URL}/register`, {
 				email: inputEmail,
 				password: inputPassword,
 			})
@@ -112,21 +119,25 @@ function App() {
 					email: inputEmail,
 					password: inputPassword,
 					picture_url: '',
+					new_user: false,
+					oauth_login: false,
 				});
 			})
 			.catch((err) => {
 				setIsLoading(false);
 				setIsAlertModalOpen(true);
 				if (err.response.status === 403) {
-					setAlertModalContent({
+					setAlertModalOptions({
 						title: ':(',
 						message: 'That email is already in use!',
+						style: 'error'
 					});
 					return;
 				}
-				setAlertModalContent({
+				setAlertModalOptions({
 					title: err.code,
 					message: err.message,
+					style: 'error'
 				});
 			});
 	};
@@ -138,7 +149,7 @@ function App() {
 		}
 		setIsLoading(true);
 		axios
-			.post('http://localhost:5000/login', {
+			.post(`${API_BASE_URL}/login`, {
 				email: inputEmail,
 				password: inputPassword,
 			})
@@ -149,110 +160,122 @@ function App() {
 				setIsLoading(false);
 				setIsAlertModalOpen(true);
 				if (err.response.status === 401) {
-					setAlertModalContent({
+					setAlertModalOptions({
 						title: ':(',
 						message: 'That email/password combination was not found!',
+						style: 'error',
 					});
 					return;
 				}
-				setAlertModalContent({
+				setAlertModalOptions({
 					title: err.code,
 					message: err.message,
+					style: 'error',
 				});
 			});
 	};
 
 	const submitEditProfile = async () => {
-		if (!userInfo.oauth_id && !emailValidate(inputEmail)) {
+		if (!userInfo.oauth_login && !emailValidate(inputEmail)) {
 			setFormEmailError(true);
 		}
-		if (!userInfo.oauth_id && !passwordValidate(inputPassword)) {
+		if (!userInfo.oauth_login && !passwordValidate(inputPassword)) {
 			setFormPasswordError(true);
 		}
 		if (!minValidate(inputName)) {
 			setFormNameError(true);
 		}
 		if (
-			(!userInfo.oauth_id && !emailValidate(inputEmail)) ||
-			(!userInfo.oauth_id && !passwordValidate(inputPassword)) ||
+			(!userInfo.oauth_login && !emailValidate(inputEmail)) ||
+			(!userInfo.oauth_login && !passwordValidate(inputPassword)) ||
 			!minValidate(inputName)
 		) {
 			return;
 		}
 		setIsLoading(true);
-		if (userInfo.oauth_id) {
-			axios
-				.post('http://localhost:5000/edit-profile', {
-					oauth_id: userInfo.oauth_id,
-					name: inputName,
-					bio: inputBio,
-					phone: inputPhone,
-					email: inputEmail,
-					password: inputPassword,
-					picture_url: inputPictureURL,
-				})
-				.then((res) => {
-					console.log(res.data);
-					setUserInfo(res.data.value);
-					setProfileEditFlag(false);
-					setIsLoading(false);
-				})
-				.catch((err) => {
-					setIsLoading(false);
-					setIsAlertModalOpen(true);
-					if (err.response.status === 403) {
-						setAlertModalContent({
-							title: ':(',
-							message: 'Unable to update profile!',
-						});
-						return;
-					}
-					setAlertModalContent({
-						title: err.code,
-						message: err.message,
+		const postObj = {
+			name: inputName,
+			bio: inputBio,
+			phone: inputPhone,
+			email: inputEmail,
+			password: inputPassword,
+			picture_url: inputPictureURL,
+			new_user: false,
+			...(userInfo.oauth_id ? { oauth_id: userInfo.oauth_id } : null),
+			...(userInfo.oauth_id ? { oauth_login: true } : { oauth_login: false }),
+		};
+		axios
+			.post(`${API_BASE_URL}/edit-profile`, postObj)
+			.then((res) => {
+				console.log(res.data);
+				setUserInfo(res.data.value);
+				setProfileEditFlag(false);
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				setIsLoading(false);
+				setIsAlertModalOpen(true);
+				if (err.response.status === 403) {
+					setAlertModalOptions({
+						title: ':(',
+						message: 'Unable to update profile!',
+						style: 'error',
 					});
+					return;
+				}
+				setAlertModalOptions({
+					title: err.code,
+					message: err.message,
+					style: 'error',
 				});
-		} else {
-			axios
-				.post('http://localhost:5000/edit-profile', {
-					curr_email: userInfo.email,
-					name: inputName,
-					bio: inputBio,
-					phone: inputPhone,
-					email: inputEmail,
-					password: inputPassword,
-					picture_url: inputPictureURL,
-				})
-				.then((res) => {
-					console.log(res.data);
-					setUserInfo(res.data.value);
-					setProfileEditFlag(false);
-					setIsLoading(false);
-				})
-				.catch((err) => {
-					setIsLoading(false);
-					setIsAlertModalOpen(true);
-					if (err.response.status === 403) {
-						setAlertModalContent({
-							title: ':(',
-							message: 'Unable to update profile!',
-						});
-						return;
-					}
-					setAlertModalContent({
-						title: err.code,
-						message: err.message,
+			});
+	};
+
+	const submitDeleteAccount = () => {
+		const search = {
+			...(userInfo.oauth_id
+				? { oauth_id: userInfo.oauth_id }
+				: { email: userInfo.email }),
+		};
+		setIsLoading(true);
+		axios
+			.post(`${API_BASE_URL}/delete-account`, search)
+			.then((res) => {
+				console.log(res.data);
+				setIsLoading(false);
+				setAlertModalOptions({ title: 'Account deleted!', style: 'success' });
+				setIsAlertModalOpen(true);
+				setTimeout(() => {
+					window.location.href = REDIRECT_URI;
+				}, 3500);
+			})
+			.catch((err) => {
+				setIsLoading(false);
+				setIsAlertModalOpen(true);
+				if (err.response.status === 403) {
+					setAlertModalOptions({
+						title: ':(',
+						message: 'Something went wrong!',
+						style: 'error'
 					});
+					return;
+				}
+				setAlertModalOptions({
+					title: err.code,
+					message: err.message,
+					style: 'error'
 				});
-		}
+			});
 	};
 
 	const onLogin = (res: any) => {
 		setIsUserLoggedIn(true);
-		// setProfileEditFlag(true);
 		setIsLoading(false);
 		setUserInfo(res.data);
 		console.log(res.data);
+		if (res.data.new_user) {
+			setProfileEditFlag(true);
+		}
 		setInputName(res.data.name);
 		setInputBio(res.data.bio);
 		setInputPhone(res.data.phone);
@@ -262,7 +285,7 @@ function App() {
 	};
 
 	const logout = () => {
-		window.location.href = 'http://localhost:5173';
+		window.location.href = REDIRECT_URI;
 	};
 
 	const handleNavRefLocation = () => {
@@ -293,7 +316,9 @@ function App() {
 		const auth_code = new URLSearchParams(window.location.search).get('code');
 		const state = new URLSearchParams(window.location.search).get('state');
 		if (
-			userDataFetchedRef.current || !auth_code || sessionStorage.getItem('genstate') != state
+			userDataFetchedRef.current ||
+			!auth_code ||
+			sessionStorage.getItem('genstate') != state
 		) {
 			return;
 		}
@@ -301,7 +326,11 @@ function App() {
 		userDataFetchedRef.current = true;
 		setIsLoading(true);
 		axios
-			.get(`http://localhost:5000/oauth/${oauth_method}?code=${auth_code}${oauth_method === 'twitter' ? `&verifier=${pkce.verifier}` : ''}`)
+			.get(
+				`${API_BASE_URL}/oauth/${oauth_method}?code=${auth_code}${
+					oauth_method === 'twitter' ? `&verifier=${pkce.verifier}` : ''
+				}`
+			)
 			.then((res) => {
 				onLogin(res);
 			})
@@ -309,9 +338,10 @@ function App() {
 				userDataFetchedRef.current = false;
 				setIsLoading(false);
 				setIsAlertModalOpen(true);
-				setAlertModalContent({
+				setAlertModalOptions({
 					title: err.code,
 					message: err.message,
+					style: 'error'
 				});
 				console.log('error:', err);
 			});
@@ -319,7 +349,7 @@ function App() {
 
 	useEffect(() => {
 		if (pkceGeneratedRef.current) {
-			return
+			return;
 		}
 		pkceGeneratedRef.current = true;
 		getPkce(43, (error, { verifier, challenge }) => {
@@ -359,7 +389,7 @@ function App() {
 			{isAlertModalOpen ? (
 				<AlertModal
 					alertModalRef={alertModalRef}
-					alertModalContent={alertModalContent}
+					alertModalOptions={alertModalOptions}
 					setIsAlertModalOpen={setIsAlertModalOpen}
 				></AlertModal>
 			) : null}
@@ -395,6 +425,8 @@ function App() {
 							setInputEmail={setInputEmail}
 							setInputPassword={setInputPassword}
 							setIsEditPfpModalOpen={setIsEditPfpModalOpen}
+							setIsAlertModalOpen={setIsAlertModalOpen}
+							setAlertModalOptions={setAlertModalOptions}
 							inputPictureURL={inputPictureURL}
 							formPasswordError={formPasswordError}
 							setFormPasswordError={setFormPasswordError}
@@ -403,6 +435,9 @@ function App() {
 							formNameError={formNameError}
 							setFormNameError={setFormNameError}
 							submitEditProfile={submitEditProfile}
+							submitDeleteAccount={submitDeleteAccount}
+							deleteAccountFlag={deleteAccountFlag}
+							setDeleteAccountFlag={setDeleteAccountFlag}
 						></UserInfoView>
 						<footer>
 							<p>

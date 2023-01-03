@@ -7,6 +7,9 @@ type UserInfoProps = {
 	email: string;
 	password: string;
 	picture_url: string;
+	new_user: boolean;
+	oauth_login: boolean;
+	oauth_id?: string;
 };
 
 export interface UserInfoViewProps {
@@ -19,6 +22,12 @@ export interface UserInfoViewProps {
 	setInputEmail: (inputEmail: string) => void;
 	setInputPassword: (inputPassword: string) => void;
 	setIsEditPfpModalOpen: (isEditPfpModalOpen: boolean) => void;
+	setIsAlertModalOpen: (isAlertModalOpen: boolean) => void;
+	setAlertModalOptions: (alertModalOptions: {
+		title?: string;
+		message?: string;
+		style?: string;
+	}) => void;
 	inputPictureURL: string;
 	formPasswordError: boolean;
 	setFormPasswordError: (formPasswordError: boolean) => void;
@@ -27,6 +36,9 @@ export interface UserInfoViewProps {
 	formNameError: boolean;
 	setFormNameError: (formNameError: boolean) => void;
 	submitEditProfile: () => void;
+	submitDeleteAccount: () => void;
+	deleteAccountFlag: boolean;
+	setDeleteAccountFlag: (deleteAccountFlag: boolean) => void;
 }
 
 const UserInfoView = ({
@@ -39,6 +51,8 @@ const UserInfoView = ({
 	setInputEmail,
 	setInputPassword,
 	setIsEditPfpModalOpen,
+	setIsAlertModalOpen,
+	setAlertModalOptions,
 	inputPictureURL,
 	formPasswordError,
 	setFormPasswordError,
@@ -47,6 +61,9 @@ const UserInfoView = ({
 	formNameError,
 	setFormNameError,
 	submitEditProfile,
+	submitDeleteAccount,
+	deleteAccountFlag,
+	setDeleteAccountFlag,
 }: UserInfoViewProps) => {
 	return (
 		<>
@@ -54,7 +71,10 @@ const UserInfoView = ({
 				<>
 					<div
 						className="user-edit-back-btn"
-						onClick={() => setProfileEditFlag(false)}
+						onClick={() => {
+							setProfileEditFlag(false);
+							setDeleteAccountFlag(false);
+						}}
 					>
 						<span className="material-icons">chevron_left</span>
 						<p>Back</p>
@@ -75,9 +95,9 @@ const UserInfoView = ({
 									</div>
 									<img
 										src={
-											inputPictureURL != ''
+											inputPictureURL && inputPictureURL != ''
 												? inputPictureURL
-												: userInfo.picture_url != ''
+												: userInfo.picture_url != '' && userInfo.picture_url
 												? userInfo.picture_url
 												: 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU='
 										}
@@ -121,6 +141,7 @@ const UserInfoView = ({
 								onChangeSetter={setInputEmail}
 								formEmailError={formEmailError}
 								setFormEmailError={setFormEmailError}
+								disabled={userInfo.oauth_login ? true : undefined}
 							></Input>
 							<Input
 								placeholder="Enter your new password..."
@@ -131,8 +152,31 @@ const UserInfoView = ({
 								onChangeSetter={setInputPassword}
 								formPasswordError={formPasswordError}
 								setFormPasswordError={setFormPasswordError}
+								disabled={userInfo.oauth_login ? true : undefined}
+								enterSubmit={submitEditProfile}
 							></Input>
-							<button onClick={submitEditProfile}>Save</button>
+							<div className="btn-bar">
+								<button
+									id="delete-btn"
+									onClick={() => {
+										if (deleteAccountFlag) {
+											submitDeleteAccount();
+										} else {
+											setAlertModalOptions({
+												title: 'This action is irreversible!',
+												message:
+													'If you wish to continue close this popup and try again.',
+												style: 'caution',
+											});
+											setIsAlertModalOpen(true);
+											setDeleteAccountFlag(true);
+										}
+									}}
+								>
+									Delete Account
+								</button>
+								<button onClick={submitEditProfile}>Save</button>
+							</div>
 						</div>
 					</div>
 				</>
@@ -168,7 +212,7 @@ const UserInfoView = ({
 									<div className="user-info-pfp">
 										<img
 											src={
-												userInfo.picture_url != ''
+												userInfo.picture_url && userInfo.picture_url != ''
 													? userInfo.picture_url
 													: 'https://media.istockphoto.com/vectors/default-profile-picture-avatar-photo-placeholder-vector-illustration-vector-id1223671392?k=6&m=1223671392&s=170667a&w=0&h=zP3l7WJinOFaGb2i1F4g8IS2ylw0FlIaa6x3tP9sebU='
 											}
