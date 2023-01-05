@@ -24,8 +24,10 @@ function App() {
 	// form entry
 	const [inputEmail, setInputEmail] = useState<string>('');
 	const [inputPassword, setInputPassword] = useState<string>('');
+	const [inputPasswordConfirm, setInputPasswordConfirm] = useState<string>('');
 	const [formEmailError, setFormEmailError] = useState<boolean>(false);
 	const [formPasswordError, setFormPasswordError] = useState<boolean>(false);
+	const [formPasswordConfirmError, setFormPasswordConfirmError] = useState<boolean>(false);
 	const [inputName, setInputName] = useState<string>('');
 	const [formNameError, setFormNameError] = useState<boolean>(false);
 	const [inputBio, setInputBio] = useState<string>('');
@@ -108,7 +110,7 @@ function App() {
 				password: inputPassword,
 			})
 			.then((res) => {
-				console.log(res.data);
+				// console.log(res.data);
 				setIsUserLoggedIn(true);
 				setProfileEditFlag(true);
 				setIsLoading(false);
@@ -117,7 +119,7 @@ function App() {
 					bio: '',
 					phone: '',
 					email: inputEmail,
-					password: inputPassword,
+					password: '*'.repeat(inputPassword.length),
 					picture_url: '',
 					new_user: false,
 					oauth_login: false,
@@ -176,6 +178,15 @@ function App() {
 	};
 
 	const submitEditProfile = async () => {
+		if (inputPassword === userInfo.password) {
+			setAlertModalOptions({ message: 'Please reenter or set a password'});
+			setIsAlertModalOpen(true);
+			return
+		}
+		if (inputPassword != inputPasswordConfirm) {
+			setFormPasswordConfirmError(true);
+			return
+		}
 		if (!userInfo.oauth_login && !emailValidate(inputEmail)) {
 			setFormEmailError(true);
 		}
@@ -201,16 +212,18 @@ function App() {
 			password: inputPassword,
 			picture_url: inputPictureURL,
 			new_user: false,
-			...(userInfo.oauth_id ? { oauth_id: userInfo.oauth_id } : null),
+			...(userInfo.oauth_id ? { oauth_id: userInfo.oauth_id } : { curr_email: userInfo.email }),
 			...(userInfo.oauth_id ? { oauth_login: true } : { oauth_login: false }),
 		};
 		axios
 			.post(`${API_BASE_URL}/edit-profile`, postObj)
 			.then((res) => {
-				console.log(res.data);
-				setUserInfo(res.data.value);
+				// console.log(res.data);
+				setUserInfo(res.data);
 				setProfileEditFlag(false);
 				setIsLoading(false);
+				setFormPasswordConfirmError(false);
+				setInputPasswordConfirm('');
 			})
 			.catch((err) => {
 				setIsLoading(false);
@@ -241,13 +254,11 @@ function App() {
 		axios
 			.post(`${API_BASE_URL}/delete-account`, search)
 			.then((res) => {
-				console.log(res.data);
+				// console.log(res.data);
 				setIsLoading(false);
 				setAlertModalOptions({ title: 'Account deleted!', style: 'success' });
 				setIsAlertModalOpen(true);
-				setTimeout(() => {
-					window.location.href = REDIRECT_URI;
-				}, 3500);
+				setTimeout(logout, 3500);
 			})
 			.catch((err) => {
 				setIsLoading(false);
@@ -272,7 +283,7 @@ function App() {
 		setIsUserLoggedIn(true);
 		setIsLoading(false);
 		setUserInfo(res.data);
-		console.log(res.data);
+		// console.log(res.data);
 		if (res.data.new_user) {
 			setProfileEditFlag(true);
 		}
@@ -311,7 +322,7 @@ function App() {
 		}
 	};
 
-	// oauth
+	// handle oauth code
 	useEffect(() => {
 		const auth_code = new URLSearchParams(window.location.search).get('code');
 		const state = new URLSearchParams(window.location.search).get('state');
@@ -424,12 +435,16 @@ function App() {
 							setInputPhone={setInputPhone}
 							setInputEmail={setInputEmail}
 							setInputPassword={setInputPassword}
+							setInputPasswordConfirm={setInputPasswordConfirm}
 							setIsEditPfpModalOpen={setIsEditPfpModalOpen}
 							setIsAlertModalOpen={setIsAlertModalOpen}
 							setAlertModalOptions={setAlertModalOptions}
+							inputPassword={inputPassword}
 							inputPictureURL={inputPictureURL}
 							formPasswordError={formPasswordError}
+							formPasswordConfirmError={formPasswordConfirmError}
 							setFormPasswordError={setFormPasswordError}
+							setFormPasswordConfirmError={setFormPasswordConfirmError}
 							formEmailError={formEmailError}
 							setFormEmailError={setFormEmailError}
 							formNameError={formNameError}

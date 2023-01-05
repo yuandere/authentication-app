@@ -84,6 +84,7 @@ const Login = ({
 					<Input
 						placeholder="Password"
 						helperText="Password must be at least 4 characters"
+						password
 						iconLeft="lock"
 						size={16}
 						onChangeSetter={setInputPassword}

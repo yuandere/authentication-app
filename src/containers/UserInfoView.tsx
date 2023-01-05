@@ -21,6 +21,7 @@ export interface UserInfoViewProps {
 	setInputPhone: (inputPhone: number | string) => void;
 	setInputEmail: (inputEmail: string) => void;
 	setInputPassword: (inputPassword: string) => void;
+	setInputPasswordConfirm: (inputPasswordConfirm: string) => void;
 	setIsEditPfpModalOpen: (isEditPfpModalOpen: boolean) => void;
 	setIsAlertModalOpen: (isAlertModalOpen: boolean) => void;
 	setAlertModalOptions: (alertModalOptions: {
@@ -28,9 +29,12 @@ export interface UserInfoViewProps {
 		message?: string;
 		style?: string;
 	}) => void;
+	inputPassword: string;
 	inputPictureURL: string;
 	formPasswordError: boolean;
+	formPasswordConfirmError: boolean;
 	setFormPasswordError: (formPasswordError: boolean) => void;
+	setFormPasswordConfirmError: (formPasswordConfirmError: boolean) => void;
 	formEmailError: boolean;
 	setFormEmailError: (formEmailError: boolean) => void;
 	formNameError: boolean;
@@ -50,12 +54,16 @@ const UserInfoView = ({
 	setInputPhone,
 	setInputEmail,
 	setInputPassword,
+	setInputPasswordConfirm,
 	setIsEditPfpModalOpen,
 	setIsAlertModalOpen,
 	setAlertModalOptions,
+	inputPassword,
 	inputPictureURL,
 	formPasswordError,
+	formPasswordConfirmError,
 	setFormPasswordError,
+	setFormPasswordConfirmError,
 	formEmailError,
 	setFormEmailError,
 	formNameError,
@@ -65,16 +73,26 @@ const UserInfoView = ({
 	deleteAccountFlag,
 	setDeleteAccountFlag,
 }: UserInfoViewProps) => {
+	const resetInputs = () => {
+		setProfileEditFlag(false);
+		setDeleteAccountFlag(false);
+		setInputName(userInfo.name);
+		setInputBio(userInfo.bio);
+		setInputPhone(userInfo.phone);
+		setInputEmail(userInfo.email);
+		setInputPassword(userInfo.password);
+		setFormNameError(false);
+		setFormEmailError(false);
+		setFormPasswordError(false);
+		setFormPasswordConfirmError(false);
+	}
 	return (
 		<>
 			{profileEditFlag ? (
 				<>
 					<div
 						className="user-edit-back-btn"
-						onClick={() => {
-							setProfileEditFlag(false);
-							setDeleteAccountFlag(false);
-						}}
+						onClick={resetInputs}
 					>
 						<span className="material-icons">chevron_left</span>
 						<p>Back</p>
@@ -147,11 +165,23 @@ const UserInfoView = ({
 								placeholder="Enter your new password..."
 								labelText="Password"
 								helperText="Password must be at least 4 characters"
+								password
 								size={16}
-								value={userInfo.password}
+								value={inputPassword}
 								onChangeSetter={setInputPassword}
 								formPasswordError={formPasswordError}
 								setFormPasswordError={setFormPasswordError}
+								disabled={userInfo.oauth_login ? true : undefined}
+							></Input>
+							<Input
+								labelText="Confirm Password"
+								helperText="Passwords must match"
+								password
+								size={16}
+								value=''
+								onChangeSetter={setInputPasswordConfirm}
+								formPasswordConfirmError={formPasswordConfirmError}
+								setFormPasswordConfirmError={setFormPasswordError}
 								disabled={userInfo.oauth_login ? true : undefined}
 								enterSubmit={submitEditProfile}
 							></Input>

@@ -6,6 +6,7 @@ export interface InputProps {
 	iconRight?: string;
 	size?: number;
 	multiline?: boolean;
+	password?: boolean;
 	fullWidth?: boolean;
 	error?: boolean;
 	disabled?: boolean;
@@ -19,8 +20,10 @@ export interface InputProps {
 	onChangeSetter: (unknown: any) => void;
 	formEmailError?: boolean;
 	formPasswordError?: boolean;
+	formPasswordConfirmError?: boolean;
 	setFormEmailError?: (formEmailError: boolean) => void;
 	setFormPasswordError?: (formPasswordError: boolean) => void;
+	setFormPasswordConfirmError?: (formPasswordConfirmError: boolean) => void;
 	formNameError?: boolean;
 	setFormNameError?: (formNameError: boolean) => void;
 }
@@ -33,6 +36,7 @@ const Input = ({
 	iconRight,
 	size,
 	multiline,
+	password,
 	fullWidth,
 	error,
 	disabled,
@@ -46,8 +50,10 @@ const Input = ({
 	onChangeSetter,
 	formEmailError,
 	formPasswordError,
+	formPasswordConfirmError,
 	setFormEmailError,
 	setFormPasswordError,
+	setFormPasswordConfirmError,
 	formNameError,
 	setFormNameError
 }: InputProps) => {
@@ -84,7 +90,7 @@ const Input = ({
 				<div className="input-container">
 					{iconLeft ? <span className="material-icons">{iconLeft}</span> : null}
 					<input
-						type="text"
+						type={password ? 'password' : 'text'}
 						className={classString}
 						placeholder={placeholder ? placeholder : ''}
 						size={size ? size : undefined}
@@ -105,6 +111,10 @@ const Input = ({
 								setFormPasswordError(false);
 								return;
 							}
+							if (formPasswordConfirmError && setFormPasswordConfirmError) {
+								setFormPasswordConfirmError(false);
+								return;
+							}
 							if (formNameError && setFormNameError) {
 								setFormNameError(false);
 								return;
@@ -120,7 +130,7 @@ const Input = ({
 				</div>
 			)}
 
-			{formEmailError || formPasswordError || formNameError ? (
+			{formEmailError || formPasswordError || formPasswordConfirmError || formNameError ? (
 				<div className="input-helper input-error">
 					<p>{helperText}</p>
 				</div>

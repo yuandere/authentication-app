@@ -142,15 +142,15 @@ nav .nav-right,
 }
 
 .alert-modal-error .alert-modal-inner {
-  border: 2px solid red;
+  border: 3px solid red;
 }
 
 .alert-modal-success .alert-modal-inner {
-  border: 2px solid green;
+  border: 3px solid green;
 }
 
 .alert-modal-caution .alert-modal-inner {
-  border: 2px solid yellow;
+  border: 3px solid yellow;
 }
 
 .login-container {
