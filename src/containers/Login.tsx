@@ -5,10 +5,11 @@ import {
 	TWITTER_CLIENT_ID,
 	REDIRECT_URI,
 	GOOGLE_CLIENT_ID,
+	REDIRECT_URL_NGROK
+
 } from '../util/constants';
 import Input from '../components/Input';
 
-const REDIRECT_URL_NGROK = 'https://3206-104-59-98-29.ngrok.io';
 
 export interface LoginProps {
 	isThemeDark: boolean;
