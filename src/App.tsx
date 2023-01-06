@@ -394,7 +394,7 @@ function App() {
 		<div className="App">
 			{isLoading ? (
 				<div className="loading-screen">
-					<img src="./src/assets/Spinner-1s-200px.svg"></img>
+					<img src="./Spinner-1s-200px.svg"></img>
 				</div>
 			) : null}
 			{isAlertModalOpen ? (

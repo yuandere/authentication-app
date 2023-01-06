@@ -53,8 +53,8 @@ const Login = ({
 					<img
 						src={
 							!isThemeDark
-								? './src/assets/devchallenges.svg'
-								: './src/assets/devchallenges-light.svg'
+								? './devchallenges.svg'
+								: './devchallenges-light.svg'
 						}
 					></img>
 				</div>
@@ -109,7 +109,7 @@ const Login = ({
 					<p>or continue with one of these</p>
 					<div className="socials-container">
 						<img
-							src="./src/assets/Google.svg"
+							src="./Google.svg"
 							onClick={() => {
 								generateState();
 								sessionStorage.setItem('oauthmethod', 'google');
@@ -117,20 +117,20 @@ const Login = ({
 							}}
 						></img>
 						<img
-							src="./src/assets/Facebook.svg"
+							src="./Facebook.svg"
 							onClick={() => {
 								generateState();
 								sessionStorage.setItem('oauthmethod', 'facebook');
 								window.location.href = `https://www.facebook.com/v15.0/dialog/oauth?client_id=${FACEBOOK_CLIENT_ID}&redirect_uri=${REDIRECT_URI + '/'}&state=${GEN_STATE}`;
 							}}
 						></img>
-						<img src="./src/assets/Twitter.svg" onClick={() => {
+						<img src="./Twitter.svg" onClick={() => {
 							generateState();
 							sessionStorage.setItem('oauthmethod', 'twitter');
 							window.location.href = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${REDIRECT_URL_NGROK}&scope=tweet.read%20users.read%20offline.access&state=${GEN_STATE}&code_challenge=${pkce.challenge}&code_challenge_method=S256`
 						}}></img>
 						<img
-							src="./src/assets/Github.svg"
+							src="./Github.svg"
 							onClick={() => {
 								generateState();
 								sessionStorage.setItem('oauthmethod', 'github');
