@@ -10,4 +10,5 @@ export const GOOGLE_CLIENT_ID = process.env.VITE_GOOGLE_CLIENT_ID;
 export const FACEBOOK_CLIENT_ID = process.env.VITE_FACEBOOK_CLIENT_ID;
 export const REDIRECT_URI = 'https://lucent-mermaid-ff4214.netlify.app/';
 export const TWITTER_CLIENT_ID = process.env.VITE_TWITTER_CLIENT_ID;
-export const REDIRECT_URL_NGROK = 'https://3206-104-59-98-29.ngrok.io';
+// export const REDIRECT_URL_NGROK = 'https://3206-104-59-98-29.ngrok.io';
+export const REDIRECT_URL_NGROK = 'https://lucent-mermaid-ff4214.netlify.app/';
