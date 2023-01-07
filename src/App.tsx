@@ -178,12 +178,12 @@ function App() {
 	};
 
 	const submitEditProfile = async () => {
-		if (inputPassword === userInfo.password) {
+		if (!userInfo.oauth_login && inputPassword === userInfo.password) {
 			setAlertModalOptions({ message: 'Please reenter or set a password'});
 			setIsAlertModalOpen(true);
 			return
 		}
-		if (inputPassword != inputPasswordConfirm) {
+		if (!userInfo.oauth_login && inputPassword != inputPasswordConfirm) {
 			setFormPasswordConfirmError(true);
 			return
 		}
