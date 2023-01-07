@@ -303,13 +303,18 @@ function App() {
 		const { current } = navRightRef;
 		if (current) {
 			let boundingRect = current.getBoundingClientRect();
+			let leftAlt = 0;
+			if (boundingRect.width < 219) {
+				boundingRect.width = 219;
+				leftAlt = boundingRect.left - 155;
+			}
 			document.documentElement.style.setProperty(
 				'--navMenuTop',
 				`${boundingRect.top + boundingRect.height + 10}px`
 			);
 			document.documentElement.style.setProperty(
 				'--navMenuLeft',
-				`${boundingRect.left}px`
+				`${leftAlt === 0 ? boundingRect.left : leftAlt}px`
 			);
 			document.documentElement.style.setProperty(
 				'--navMenuRight',

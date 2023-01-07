@@ -212,10 +212,10 @@ const UserInfoView = ({
 				</>
 			) : (
 				<>
-					<h2 style={{ alignSelf: 'center', marginBottom: '0' }}>
+					<h2 id='hidden-mobile' style={{ alignSelf: 'center', marginBottom: '0' }}>
 						Personal info
 					</h2>
-					<p style={{ alignSelf: 'center', marginBottom: '2rem' }}>
+					<p id='hidden-mobile' style={{ alignSelf: 'center', marginBottom: '2rem' }}>
 						Basic info, like your name and photo
 					</p>
 					<div className="user-info-container">
