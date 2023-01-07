@@ -27,8 +27,8 @@ const NavbarProps = ({
 			<img
 				src={
 					!isThemeDark
-						? './src/assets/devchallenges.svg'
-						: './src/assets/devchallenges-light.svg'
+						? './devchallenges.svg'
+						: './devchallenges-light.svg'
 				}
 			></img>
 			<div className="nav-right" ref={navRightRef}>
