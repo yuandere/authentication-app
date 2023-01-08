@@ -3,10 +3,6 @@
 <h1 align="center">Authentication App</h1>
 
 <div align="center">
-   Solution for a challenge from  <a href="http://devchallenges.io" target="_blank">Devchallenges.io</a>.
-</div>
-
-<div align="center">
   <h3>
     <a href="https://https://lucent-mermaid-ff4214.netlify.app/">
       Demo
@@ -22,7 +18,10 @@
   </h3>
 </div>
 
-![screenshot](https://user-images.githubusercontent.com/22509961/211219507-61d9b319-81ae-4c65-b489-3afba35d256e.png)
+<p align="center">
+  <img alt="screenshot" src="https://user-images.githubusercontent.com/22509961/211219507-61d9b319-81ae-4c65-b489-3afba35d256e.png">
+</p>
+<!-- ![screenshot](https://user-images.githubusercontent.com/22509961/211219507-61d9b319-81ae-4c65-b489-3afba35d256e.png) -->
 
 This app demonstrates OAuth 2.0 authentication flows with Google, Facebook, Twitter and Github. [The backend](https://https://github.com/yuandere/authentication-app-backend) handles requests made to those services and stores user information using MongoDB.
 
