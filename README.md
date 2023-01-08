@@ -25,6 +25,8 @@
 
 This app demonstrates OAuth 2.0 authentication flows with Google, Facebook, Twitter and Github. [The backend](https://github.com/yuandere/authentication-app-backend) handles requests made to those services and stores user information using MongoDB.
 
+**Demo hosting is on Render's free plan so the first request may take upwards of 20 seconds to go through.
+
 ### Built With
 
 <!-- This section should list any major frameworks that you built your project using. Here are a few examples.-->
