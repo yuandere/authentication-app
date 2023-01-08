@@ -4,11 +4,11 @@
 
 <div align="center">
   <h3>
-    <a href="https://https://lucent-mermaid-ff4214.netlify.app/">
+    <a href="https://lucent-mermaid-ff4214.netlify.app/">
       Demo
     </a>
     <span> | </span>
-    <a href="https://https://github.com/yuandere/authentication-app">
+    <a href="https://github.com/yuandere/authentication-app">
       Solution
     </a>
     <span> | </span>
