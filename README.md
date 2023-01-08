@@ -22,6 +22,7 @@
   </h3>
 </div>
 
+![screenshot](https://user-images.githubusercontent.com/22509961/211219507-61d9b319-81ae-4c65-b489-3afba35d256e.png)
 
 This app demonstrates OAuth 2.0 authentication flows with Google, Facebook, Twitter and Github. [The backend](https://https://github.com/yuandere/authentication-app-backend) handles requests made to those services and stores user information using MongoDB.
 
