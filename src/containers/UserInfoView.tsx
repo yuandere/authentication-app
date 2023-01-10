@@ -162,7 +162,7 @@ const UserInfoView = ({
 								disabled={userInfo.oauth_login ? true : undefined}
 							></Input>
 							<Input
-								placeholder="Enter your new password..."
+								placeholder="Reenter or set new password..."
 								labelText="Password"
 								helperText="Password must be at least 4 characters"
 								password

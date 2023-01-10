@@ -119,7 +119,7 @@ function App() {
 					bio: '',
 					phone: '',
 					email: inputEmail,
-					password: '*'.repeat(inputPassword.length),
+					password: '',
 					picture_url: '',
 					new_user: false,
 					oauth_login: false,
@@ -222,6 +222,12 @@ function App() {
 				setUserInfo(res.data);
 				setProfileEditFlag(false);
 				setIsLoading(false);
+				setInputName(res.data.name);
+				setInputBio(res.data.bio);
+				setInputPhone(res.data.phone);
+				setInputEmail(res.data.email);
+				setInputPassword('');
+				setInputPictureURL(res.data.picture_url);
 				setFormPasswordConfirmError(false);
 				setInputPasswordConfirm('');
 			})
@@ -291,7 +297,7 @@ function App() {
 		setInputBio(res.data.bio);
 		setInputPhone(res.data.phone);
 		setInputEmail(res.data.email);
-		setInputPassword(res.data.password);
+		setInputPassword('');
 		setInputPictureURL(res.data.picture_url);
 	};
 
