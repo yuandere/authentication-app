@@ -124,11 +124,14 @@ const Login = ({
 								window.location.href = `https://www.facebook.com/v15.0/dialog/oauth?client_id=${FACEBOOK_CLIENT_ID}&redirect_uri=${REDIRECT_URI + '/'}&state=${GEN_STATE}`;
 							}}
 						></img>
-						<img src="./Twitter.svg" onClick={() => {
-							generateState();
-							sessionStorage.setItem('oauthmethod', 'twitter');
-							window.location.href = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${REDIRECT_URL_NGROK}&scope=tweet.read%20users.read%20offline.access&state=${GEN_STATE}&code_challenge=${pkce.challenge}&code_challenge_method=S256`
-						}}></img>
+						<img src="./Twitter.svg" 
+						style={{cursor: 'not-allowed'}}
+						// onClick={() => {
+						// 	generateState();
+						// 	sessionStorage.setItem('oauthmethod', 'twitter');
+						// 	window.location.href = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${REDIRECT_URL_NGROK}&scope=tweet.read%20users.read%20offline.access&state=${GEN_STATE}&code_challenge=${pkce.challenge}&code_challenge_method=S256`
+						// }}
+						></img>
 						<img
 							src="./Github.svg"
 							onClick={() => {
