@@ -5,19 +5,17 @@ export interface EditPfpProps {
 	setIsEditPfpModalOpen: (isEditPfpModalOpen: boolean) => void;
 	inputPictureURL: string;
 	userPictureURL: string;
-	editPfpModalRef: any;
 }
 
 const EditPfp = ({
 	setInputPictureURL,
 	setIsEditPfpModalOpen,
 	inputPictureURL,
-	userPictureURL,
-	editPfpModalRef
+	userPictureURL
 }: EditPfpProps) => {
 	return (
 		<div className="edit-pfp-container">
-			<div className="edit-pfp-inner flex flex-col align-center" ref={editPfpModalRef}>
+			<div className="edit-pfp-inner flex flex-col align-center">
 				<p style={{ marginTop: 0 }}>Please enter a new picture URL</p>
 				<div className="edit-pfp-picture-container">
 					<img
@@ -35,7 +33,7 @@ const EditPfp = ({
             className='mr1 btn-cancel'
 						onClick={() => {
 							setIsEditPfpModalOpen(false);
-							setInputPictureURL('');
+							setInputPictureURL(userPictureURL);
 						}}
 					>
 						Cancel

@@ -83,10 +83,6 @@ function App() {
 	const navOpenRef = useOnclickOutside(() => {
 		setIsNavMenuOpen(false);
 	});
-	const editPfpModalRef = useOnclickOutside(() => {
-		setIsEditPfpModalOpen(false);
-		setInputPictureURL('');
-	});
 
 	const handleThemeChange = () => {
 		const matchesDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -424,7 +420,6 @@ function App() {
 					setIsEditPfpModalOpen={setIsEditPfpModalOpen}
 					inputPictureURL={inputPictureURL}
 					userPictureURL={userInfo.picture_url}
-					editPfpModalRef={editPfpModalRef}
 				></EditPfp>
 			) : null}
 			{isUserLoggedIn ? (
