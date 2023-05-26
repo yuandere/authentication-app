@@ -23,7 +23,7 @@
 </p>
 <!-- ![screenshot](https://user-images.githubusercontent.com/22509961/211219507-61d9b319-81ae-4c65-b489-3afba35d256e.png) -->
 
-This app demonstrates OAuth 2.0 authentication flows with Google, Facebook, ~~Twitter~~ [(free API access now unavailable)](https://twitter.com/TwitterDev/status/1621026986784337922) and Github. [The backend](https://github.com/yuandere/authentication-app-backend) handles requests made to those services and stores user information using MongoDB.
+This app demonstrates OAuth 2.0 authentication flows with Google, Facebook, ~~Twitter~~ (TODO) and Github. [The backend](https://github.com/yuandere/authentication-app-backend) handles requests made to those services and stores user information using MongoDB.
 
 **Demo hosting is on Render's free plan so the first request may take upwards of 20 seconds to go through.
 
