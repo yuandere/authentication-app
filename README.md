@@ -50,7 +50,3 @@ This application/site was created as a submission to a [DevChallenges](https://d
 
 - [Accessing Data in an OAuth Server](https://www.oauth.com/oauth2-servers/accessing-data/)
 
-## Contact
-
-- GitHub [@yuandere](https://github.com/yuandere)
-- Discord [@al doub#7487](https://discordapp.com)
